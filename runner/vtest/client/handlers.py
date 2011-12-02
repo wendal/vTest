@@ -5,6 +5,7 @@ import shutil
 import json
 import logging
 import new
+import time
 
 log = logging.getLogger('vtest')
 
@@ -59,7 +60,7 @@ class BaseHandler:
 
     #---------------------------------------------------------------------------------------------
     
-    def http_send(self, uri, method='GET', reps_header=None, reps_body=None, **kwargs):
+    def http_send(self, uri=None, method='GET', reps_header=None, reps_body=None, **kwargs):
         headers, params = self._render_headers_params(kwargs)
         resp = self.webclient.send(method, uri, 
                             headers=headers, 
@@ -79,7 +80,7 @@ class BaseHandler:
                     shutil.copyfileobj(resp, f)
         return True
                         
-    def ajax_upload(self, uri, method='POST', file=None, **kwargs):
+    def ajax_upload(self, uri=None, method='POST', file=None, **kwargs):
         headers, params = self._render_headers_params(kwargs)
         file_path = self._render(file)
         with open(file_path) as f :
@@ -89,14 +90,14 @@ class BaseHandler:
         else :
             return False
     
-    def img_make(self, file, width, height, r, g , b):
+    def img_make(self, file=None, width=800, height=640, r=0, g=90 , b=90):
         with open(self._render(file), 'w') as f :
             import bmp
             img = bmp.BitMap( width, height, bmp.Color(r,g,b))
             f.write(img.getBitmap())
         return True
 
-    def json_parse(self, source, dest):
+    def json_parse(self, source='{}', dest=None):
         if source.startswith('context') :
             self.context[dest] = json.loads(self.context[source[len('context:'):]])
         elif source.startswith('file') :
@@ -104,17 +105,19 @@ class BaseHandler:
                 self.context[dest] = json.load(f)
         return True
 
-    def set(self, name, value=None, remove=None):
+    def set(self, name=None, value=None, remove=None):
         if remove :
             value = None
         self.context[name] = value
         return True
     
-    def loop(self, var_index, start, end, delay, briefs):
+    def loop(self, var_index='i', start=0, end=1, delay=0, briefs=[]):
         for n in xrange(start, end) :
             self.context[var_index] = n
             if not self._run_briefs(briefs) :
                 return False
+            if delay :
+                time.sleep(delay)
         return True
     
     def switch(self, **kwargs):
@@ -126,8 +129,11 @@ class BaseHandler:
     def random(self):
         pass
         
-    def extends(self, type_name, type_method):
-        exec type_method + '''\nglobals()['vtest_NNN_%s'] = %s''' % (type_name, type_name)
-        m = new.instancemethod(globals()['vtest_NNN_%s' % type_name], self, BaseHandler)
-        self.__dict__[type_name] = m
-        globals().pop('vtest_NNN_%s' % type_name)
+    def extends(self, type_name=None, type_method=None):
+        if type_name and type_method :
+            exec type_method + '''\nglobals()['vtest_TMP_method'] = %s''' % type_name
+            m = new.instancemethod(globals()['vtest_TMP_method'], self, BaseHandler)
+            self.__dict__[type_name] = m
+            globals().pop('vtest_TMP_method')
+        elif type_method :
+            exec type_method

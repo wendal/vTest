@@ -9,7 +9,7 @@ from vtest.client.handlers import BaseHandler
 
 class Test(unittest.TestCase):
 
-
+    
     def test_img_make(self):
         img_path = '_img_make.bmp'
         if os.path.exists(img_path):
@@ -17,7 +17,7 @@ class Test(unittest.TestCase):
         BaseHandler().img_make(img_path, 800, 480, 0, 255, 90)
         assert os.path.exists(img_path)
         assert os.path.getsize(img_path) > 1024
-
+    
     def test_extends(self):
         type_method = '''
 def abc(self, name) :
