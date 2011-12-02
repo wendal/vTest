@@ -128,5 +128,6 @@ class BaseHandler:
         
     def extends(self, type_name, type_method):
         exec type_method + '''\nglobals()['vtest_NNN_%s'] = %s''' % (type_name, type_name)
-        new.instancemethod(globals()['vtest_NNN_%s' % type_name], self, None)
-        globals().pop('vtest_NNN_%s' % type_method)
+        m = new.instancemethod(globals()['vtest_NNN_%s' % type_name], self, BaseHandler)
+        self.__dict__[type_name] = m
+        globals().pop('vtest_NNN_%s' % type_name)

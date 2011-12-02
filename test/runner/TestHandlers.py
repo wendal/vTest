@@ -24,10 +24,10 @@ def abc(self, name) :
     print name
     return True
         '''
-        exec type_method + '''\nglobals()['abc'] = abc'''
-        print globals()['abc']
-        import new
-        print new.function(type_method, globals(), 'abc')
+        b = BaseHandler()
+        b.extends('abc', type_method)
+        b.abc('wendal')
+        
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
