@@ -3,40 +3,44 @@
 from vtest.client.helper import WebClient, renderTpl
 import shutil
 import json
-import imageop
+import logging
+import new
+
+log = logging.getLogger('vtest')
 
 class BaseHandler:
     
     def __init__(self):
         self.webclient = WebClient()
         self.context = {}
-        
-    def run(self, uri=None, method='GET', **kwargs):
-        pass
     
     def _use(self, key):
         if not key :
-            return
+            return {}
         return self.context.get(key)
     
-    def paser(self, values):
+    def _paser(self, values):
         if not values :
             return
         if values.get('$use') :
-            headers = dict(values.items(), self._use(values.get('$use').items()))
+            headers = dict(values.items(), self._use(values.get('$use')).items())
             headers.pop('$use')
     
     def _render(self, tpl):
+        r'''模板渲染,返回值是一个str'''
         result = renderTpl(tpl, self.context)
         if isinstance(result, unicode) :
             result = result.encode()
-            print result
+            #print result
         return result
     
+    def _eval(self, el):
+        return eval(el, None, self.context)
+    
     def _render_headers_params(self, args):
-        headers = self.paser(args.get('headers'))
+        headers = self._paser(args.get('headers'))
         if args.get('cookie') :
-            headers['Cookie'] = ';'.join(self._render(args.get('cookie')))
+            headers['Cookie'] = ';'.join(self._eval(args['cookie']))
         params = {}
         if args.get('params') :
             for k,v in args['params'] :
@@ -46,14 +50,16 @@ class BaseHandler:
     def _run_briefs(self, briefs):
         for brief_info in briefs :
             brief = self.context['briefs'][brief_info['brief']]
-            handler = self.context['handlers'][brief['type']]
-            if not handler().run(**brief['args']) :
+            if not self.run_brief(brief) :
                 return False
         return True
-            
-class http_send(BaseHandler):
     
-    def run(self, uri, method='GET', reps_header=None, reps_body=None, **kwargs):
+    def run_brief(self, brief):
+        return self.__getattr__(brief['type'])(**brief['args'])
+
+    #---------------------------------------------------------------------------------------------
+    
+    def http_send(self, uri, method='GET', reps_header=None, reps_body=None, **kwargs):
         headers, params = self._render_headers_params(kwargs)
         resp = self.webclient.send(method, uri, 
                             headers=headers, 
@@ -73,9 +79,7 @@ class http_send(BaseHandler):
                     shutil.copyfileobj(resp, f)
         return True
                         
-class ajax_upload(BaseHandler):
-    
-    def run(self, uri, method='POST', file=None, **kwargs):
+    def ajax_upload(self, uri, method='POST', file=None, **kwargs):
         headers, params = self._render_headers_params(kwargs)
         file_path = self._render(file)
         with open(file_path) as f :
@@ -84,18 +88,15 @@ class ajax_upload(BaseHandler):
             return True
         else :
             return False
-        
-class img_make(BaseHandler):
     
-    def run(self, file, width, height, r, g , b):
+    def img_make(self, file, width, height, r, g , b):
         with open(self._render(file), 'w') as f :
             import bmp
             img = bmp.BitMap( width, height, bmp.Color(r,g,b))
             f.write(img.getBitmap())
         return True
 
-class json_parse(BaseHandler):
-    def run(self, source, dest):
+    def json_parse(self, source, dest):
         if source.startswith('context') :
             self.context[dest] = json.loads(self.context[source[len('context:'):]])
         elif source.startswith('file') :
@@ -103,35 +104,29 @@ class json_parse(BaseHandler):
                 self.context[dest] = json.load(f)
         return True
 
-def set_it(BaseHandler):
-    
-    def run(self, name, value=None, remove=None):
+    def set(self, name, value=None, remove=None):
         if remove :
             value = None
         self.context[name] = value
         return True
-
-def loop(BaseHandler):
     
-    def run(self, var_index, start, end, delay, briefs):
+    def loop(self, var_index, start, end, delay, briefs):
         for n in xrange(start, end) :
             self.context[var_index] = n
             if not self._run_briefs(briefs) :
                 return False
         return True
-
-def switch(BaseHandler):
     
-    def run(self, **kwargs):
+    def switch(self, **kwargs):
         for k,briefs in kwargs :
-            if k != 'default' :
-                if self._render(k) :
-                    return self._run_briefs(briefs)
+            if k != 'default' and self._eval(k) :
+                return self._run_briefs(briefs)
         return self._run_briefs(kwargs.get('default'))
-        
-def random(BaseHandler):
     
-    def run(self):
+    def random(self):
         pass
         
-
+    def extends(self, type_name, type_method):
+        exec type_method + '''\nglobals()['vtest_NNN_%s'] = %s''' % (type_name, type_name)
+        new.instancemethod(globals()['vtest_NNN_%s' % type_name], self, None)
+        globals().pop('vtest_NNN_%s' % type_method)
