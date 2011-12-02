@@ -27,7 +27,11 @@ class BaseHandler:
             headers.pop('$use')
     
     def _render(self, tpl):
-        return renderTpl(tpl, self.context)
+        result = renderTpl(tpl, self.context)
+        if isinstance(result, unicode) :
+            result = result.encode()
+            print result
+        return result
     
     def _render_headers_params(self, args):
         headers = self.paser(args.get('headers'))
@@ -83,9 +87,11 @@ class ajax_upload(BaseHandler):
         
 class img_make(BaseHandler):
     
-    def run(self, file, width, height, bgcolor):
-        with open(self._render(file)) as f :
-            imageop.grey2rgb()
+    def run(self, file, width, height, r, g , b):
+        with open(self._render(file), 'w') as f :
+            import bmp
+            img = bmp.BitMap( width, height, bmp.Color(r,g,b))
+            f.write(img.getBitmap())
         return True
 
 class json_parse(BaseHandler):
