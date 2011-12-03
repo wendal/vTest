@@ -131,9 +131,8 @@ class BaseHandler:
         
     def extends(self, type_name=None, type_method=None):
         if type_name and type_method :
-            exec type_method + '''\nglobals()['vtest_TMP_method'] = %s''' % type_name
-            m = new.instancemethod(globals()['vtest_TMP_method'], self, BaseHandler)
-            self.__dict__[type_name] = m
-            globals().pop('vtest_TMP_method')
+            _method = None
+            exec type_method + '''\n_method = %s''' % type_name
+            self.__dict__[type_name] = new.instancemethod(_method, self, None)
         elif type_method :
             exec type_method
