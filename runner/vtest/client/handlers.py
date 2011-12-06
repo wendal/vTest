@@ -6,6 +6,9 @@ import json
 import logging
 import new
 import time
+import uuid
+import os
+import socket
 
 log = logging.getLogger('vtest')
 
@@ -21,7 +24,19 @@ class BaseHandler(object):
     def __init__(self, task=None):
         if task :
             self.webclient = WebClient(task['host'], task['port'])
-        self.context = {'task' : task}
+        self.context = {
+                            'task' : task ,
+                            'tmp'  : '/tmp/',
+                            'robot': {
+                                        'id' : uuid.uuid4().hex,
+                                        'pid': os.getpid()
+                                      },
+                            'sys'  : {
+                                        'name' : socket.gethostname(),
+                                        'ipv4' : socket.gethostbyname(socket.gethostname())
+                                      }
+                        }
+        log.debug('Robot init context -->\n' + json.dumps(self.context, indent=2))
         self.task = task
         
     def run(self):
