@@ -6,6 +6,7 @@ Created on 2011-12-2
 import unittest
 import os
 from vtest.client.handlers import BaseHandler 
+import json
 
 class Test(unittest.TestCase):
 
@@ -28,6 +29,12 @@ def abc(self, name) :
         b.extends('abc', type_method)
         b.abc('wendal')
         
+    def test_base(self):
+        base_json = 'meta/base.json'
+        with open(base_json) as f :
+            task = json.load(f)
+            BaseHandler(task)
+            BaseHandler(task).run()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

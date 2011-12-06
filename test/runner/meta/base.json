@@ -1,0 +1,62 @@
+{
+    "host": "wendal.net",
+    "port": 80,
+    "task": {
+        "headers": {
+            "User-Agent": "Strato Robot"
+        }
+    },
+    "steps": [
+        {
+            "node": "user.index"
+        },
+        {
+            "type": "control.loop",
+            "args": {
+                "var_index": "i",
+                "start": 0,
+                "end": 10,
+                "delay": 100,
+                "run": [
+                    {
+                        "node": "control.next"
+                    }
+                ]
+            }
+        },
+        {
+            "node": "exit.success"
+        }
+    ],
+    "nodes": {
+    	"user.index" : {
+            "type": "http.send",
+            "args": {
+                "url": "/",
+                "method": "GET",
+                "headers": {
+                    "$use": "task.headers"
+                },
+                "reps_headers_name": "http_reps_headers",
+                "reps_body": "context:JsonObj"
+            }
+        },
+    
+        "exit.success": {
+            "brief": "任务成功完成",
+            "type": "exit.success"
+        },
+        "exit.fail": {
+            "brief": "任务失败",
+            "type": "exit.fail"
+        },
+        "control.break": {
+            "brief": "退出循环",
+            "type": "control.break"
+        },
+        "control.next": {
+            "brief": "继续下一次循环",
+            "type": "control.next"
+        }
+    }
+}

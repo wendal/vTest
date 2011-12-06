@@ -9,22 +9,37 @@ import time
 
 log = logging.getLogger('vtest')
 
-class BaseHandler:
+NEXT_NODE=0
+SUCCESS=1
+FAIL=2
+ERROR=3
+LOOP_NEXT=4
+LOOP_BREAK=5
+
+class BaseHandler(object):
     
-    def __init__(self):
-        self.webclient = WebClient()
-        self.context = {}
+    def __init__(self, task=None):
+        if task :
+            self.webclient = WebClient(task['host'], task['port'])
+        self.context = {'task' : task}
+        self.task = task
+        
+    def run(self):
+        self.control_foreach(self.task.get('steps'))
+        if not self.last_code :
+            return SUCCESS
+        return self.last_code
     
     def _use(self, key):
         if not key :
             return {}
-        return self.context.get(key)
+        return self.context.get(key) or  {}
     
     def _paser(self, values):
         if not values :
             return
         if values.get('$use') :
-            headers = dict(values.items(), self._use(values.get('$use')).items())
+            headers = dict(values.items() + self._use(values.get('$use')).items())
             headers.pop('$use')
     
     def _render(self, tpl):
@@ -48,25 +63,73 @@ class BaseHandler:
                 params[k] = self._render(v)
         return (headers, params)
     
-    def _run_briefs(self, briefs):
-        for brief_info in briefs :
-            brief = self.context['briefs'][brief_info['brief']]
-            if not self.run_brief(brief) :
-                return False
-        return True
-    
-    def run_brief(self, brief):
-        return self.__getattr__(brief['type'])(**brief['args'])
+    def run_node(self, node):
+        log.debug("Run node --> " + json.dumps(node))
+        try :
+            node_type = node['type'].replace('.', '_')
+            if node_type == 'control_switch' :
+                self.last_code = self.__getattribute__(node_type)(node['args'])
+            else :
+                self.last_code = self.__getattribute__(node_type)(**node['args'])
+        except :
+            log.error('Fail to execute node', exc_info=1)
+            self.last_code = ERROR
+        return self.last_code
 
     #---------------------------------------------------------------------------------------------
+    #控制器
+
+    def control_foreach(self, nodes):
+        for node_info in nodes :
+            if node_info.get('node') :
+                node = self.task['nodes'][node_info['node']]
+            else :
+                node = node_info
+            if self.run_node(node) :
+                if self.last_code in (SUCCESS, FAIL, ERROR) :
+                    return self.last_code
+                elif self.last_code == LOOP_BREAK :
+                    return NEXT_NODE
+                #LOOP_NEXT对foreach无意义
+        return NEXT_NODE
     
+    def control_loop(self, var_index='i', start=0, end=1, delay=0, nodes=[]):
+        for n in xrange(start, end) :
+            self.context[var_index] = n
+            if self.control_foreach(nodes) :
+                if self.last_code in (SUCCESS, FAIL, ERROR) :
+                    return self.last_code
+            if delay :
+                time.sleep(delay * 0.001)
+        return NEXT_NODE #其他code?无意义,返回标准的
+    
+    def control_switch(self, args):
+        for k,nodes in args :
+            if k != 'default' and self._eval(k) :
+                return self.control_foreach(nodes)
+        if args.get('default') :
+            return self.control_foreach(args.get('default'))
+    
+    def control_break(self, *args, **kwargs):
+        return LOOP_BREAK
+    
+    def control_next(self, *args, **kwargs):
+        return LOOP_NEXT
+    
+    def control_exit(self, **kwargs):
+        if kwargs and kwargs.get('exit') :
+            return FAIL
+        return NEXT_NODE
+    
+    #---------------------------------------------------------------------------------------------
+    #普通节点
     def http_send(self, uri=None, method='GET', reps_header=None, reps_body=None, **kwargs):
         headers, params = self._render_headers_params(kwargs)
         resp = self.webclient.send(method, uri, 
                             headers=headers, 
-                            params=params)
+                            data=params)
         if not resp or resp.status >= 303 :
-            return False
+            return FAIL
         if reps_header :
             self.context[reps_header] = resp.getheaders()
         if reps_body :
@@ -78,7 +141,7 @@ class BaseHandler:
                 file_path = self._render(file_path_tpl)
                 with open(file_path, 'wb') as f :
                     shutil.copyfileobj(resp, f)
-        return True
+        return NEXT_NODE
                         
     def ajax_upload(self, uri=None, method='POST', file=None, **kwargs):
         headers, params = self._render_headers_params(kwargs)
@@ -86,16 +149,16 @@ class BaseHandler:
         with open(file_path) as f :
             resp = self.webclient.post(uri, headers, params, body=f)
         if resp and resp.status == 200 :
-            return True
+            return NEXT_NODE
         else :
-            return False
+            return FAIL
     
     def img_make(self, file=None, width=800, height=640, r=0, g=90 , b=90):
         with open(self._render(file), 'w') as f :
             import bmp
             img = bmp.BitMap( width, height, bmp.Color(r,g,b))
             f.write(img.getBitmap())
-        return True
+        return NEXT_NODE
 
     def json_parse(self, source='{}', dest=None):
         if source.startswith('context') :
@@ -103,31 +166,21 @@ class BaseHandler:
         elif source.startswith('file') :
             with open(self._render(source[len('file:'):])) as f :
                 self.context[dest] = json.load(f)
-        return True
+        return NEXT_NODE
+
+    def json_found(self, source, type, match):
+        pass #TODO
 
     def set(self, name=None, value=None, remove=None):
         if remove :
             value = None
         self.context[name] = value
-        return True
+        return NEXT_NODE
     
-    def loop(self, var_index='i', start=0, end=1, delay=0, briefs=[]):
-        for n in xrange(start, end) :
-            self.context[var_index] = n
-            if not self._run_briefs(briefs) :
-                return False
-            if delay :
-                time.sleep(delay)
-        return True
-    
-    def switch(self, **kwargs):
-        for k,briefs in kwargs :
-            if k != 'default' and self._eval(k) :
-                return self._run_briefs(briefs)
-        return self._run_briefs(kwargs.get('default'))
+
     
     def random(self):
-        pass
+        pass #TODO
         
     def extends(self, type_name=None, type_method=None):
         if type_name and type_method :
@@ -136,3 +189,24 @@ class BaseHandler:
             self.__dict__[type_name] = new.instancemethod(_method, self, None)
         elif type_method :
             exec type_method
+
+if 1 :
+    import logging.handlers
+    fh = logging.handlers.RotatingFileHandler("test.log")
+    fh.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('$: %(asctime)s > %(levelname)s > %(funcName)s@%(filename)s %(lineno)s > %(message)s')
+    fh.setFormatter(formatter)
+    log.addHandler(fh)
+    
+    console = logging.StreamHandler()
+    console.setFormatter(formatter)
+    console.setLevel(logging.DEBUG)
+    log.addHandler(console)
+
+
+
+
+
+
+
+
