@@ -6,6 +6,7 @@ Created on 2011-12-2
 import unittest
 import os
 from vtest.client.handlers import BaseHandler 
+from vtest.client.handlers import SUCCESS 
 import json
 
 class Test(unittest.TestCase):
@@ -34,7 +35,9 @@ def abc(self, name) :
         with open(base_json) as f :
             task = json.load(f)
             BaseHandler(task)
-            BaseHandler(task).run()
+            code = BaseHandler(task).run()
+            print 'Exit code', code 
+            assert SUCCESS == code
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

@@ -26,6 +26,7 @@ class BaseHandler(object):
         
     def run(self):
         self.control_foreach(self.task.get('steps'))
+        log.info('Exit code=%d' % self.last_code)
         if not self.last_code :
             return SUCCESS
         return self.last_code
@@ -67,10 +68,12 @@ class BaseHandler(object):
         log.debug("Run node --> " + json.dumps(node))
         try :
             node_type = node['type'].replace('.', '_')
+            type_method = self.__getattribute__(node_type)
+            args = node.get('args') or {'Nothing' : None}
             if node_type == 'control_switch' :
-                self.last_code = self.__getattribute__(node_type)(node['args'])
+                self.last_code = type_method(args)
             else :
-                self.last_code = self.__getattribute__(node_type)(**node['args'])
+                self.last_code = type_method(**args)
         except :
             log.error('Fail to execute node', exc_info=1)
             self.last_code = ERROR
@@ -93,10 +96,10 @@ class BaseHandler(object):
                 #LOOP_NEXT对foreach无意义
         return NEXT_NODE
     
-    def control_loop(self, var_index='i', start=0, end=1, delay=0, nodes=[]):
+    def control_loop(self, var_index='i', start=0, end=1, delay=0, run=[]):
         for n in xrange(start, end) :
             self.context[var_index] = n
-            if self.control_foreach(nodes) :
+            if self.control_foreach(run) :
                 if self.last_code in (SUCCESS, FAIL, ERROR) :
                     return self.last_code
             if delay :
@@ -121,6 +124,12 @@ class BaseHandler(object):
             return FAIL
         return NEXT_NODE
     
+    def exit_success(self, **kwargs):
+        return SUCCESS
+    
+    def exit_fail(self, **kwargs):
+        return FAIL
+    
     #---------------------------------------------------------------------------------------------
     #普通节点
     def http_send(self, uri=None, method='GET', reps_header=None, reps_body=None, **kwargs):
@@ -129,6 +138,7 @@ class BaseHandler(object):
                             headers=headers, 
                             data=params)
         if not resp or resp.status >= 303 :
+            log.debug('Resp is None or resp.status > 303' + str(resp))
             return FAIL
         if reps_header :
             self.context[reps_header] = resp.getheaders()
@@ -202,6 +212,8 @@ if 1 :
     console.setFormatter(formatter)
     console.setLevel(logging.DEBUG)
     log.addHandler(console)
+    
+    log.setLevel(logging.DEBUG)
 
 
 

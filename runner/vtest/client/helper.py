@@ -11,6 +11,7 @@ class WebClient(object):
         self.cookie='NONE'
     
     def send(self, method, uri, headers=None,data=None):
+        method = method.lower()
         if method == 'get' :
             return self.get(uri, headers)
         elif method == 'post' :
