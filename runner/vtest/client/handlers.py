@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from vtest.client.helper import WebClient, renderTpl
+from vtest.client.helper import el
 import shutil
 import json
 import logging
@@ -25,7 +26,7 @@ class BaseHandler(object):
         if task :
             self.webclient = WebClient(task['host'], task['port'])
         self.context = {
-                            'task' : task ,
+                            'task' : task['task'] ,
                             'tmp'  : '/tmp/',
                             'robot': {
                                         'id' : uuid.uuid4().hex,
@@ -51,12 +52,13 @@ class BaseHandler(object):
             return {}
         return self.context.get(key) or  {}
     
-    def _paser(self, values):
-        if not values :
-            return
-        if values.get('$use') :
-            headers = dict(values.items() + self._use(values.get('$use')).items())
-            headers.pop('$use')
+    def _paser(self, val):
+        if isinstance(val, dict) and len(val) == 1 :
+            if val.get('$use') :
+                return self._eval(val['$use'])
+        elif isinstance(val, str) and val.find(r'\${') > -1:
+            return self._render(val)
+        return val
     
     def _render(self, tpl):
         r'''模板渲染,返回值是一个str'''
@@ -66,13 +68,16 @@ class BaseHandler(object):
             #print result
         return result
     
-    def _eval(self, el):
-        return eval(el, None, self.context)
+    def _eval(self, el_str):
+        return el(el_str, self.context)
     
     def _render_headers_params(self, args):
         headers = self._paser(args.get('headers'))
         if args.get('cookie') :
             headers['Cookie'] = ';'.join(self._eval(args['cookie']))
+        new_headers = {}
+        for k,v in headers.items() :
+            new_headers[k] = str(v)
         params = {}
         if args.get('params') :
             for k,v in args['params'] :

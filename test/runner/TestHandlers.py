@@ -16,7 +16,8 @@ class Test(unittest.TestCase):
         img_path = '_img_make.bmp'
         if os.path.exists(img_path):
             os.remove(img_path)
-        BaseHandler().img_make(img_path, 800, 480, 0, 255, 90)
+        with open('meta/base.json') as f :
+            BaseHandler(json.load(f)).img_make(img_path, 800, 480, 0, 255, 90)
         assert os.path.exists(img_path)
         assert os.path.getsize(img_path) > 1024
     
@@ -26,9 +27,10 @@ def abc(self, name) :
     print name
     return True
         '''
-        b = BaseHandler()
-        b.extends('abc', type_method)
-        b.abc('wendal')
+        with open('meta/base.json') as f :
+            b = BaseHandler(json.load(f))
+            b.extends('abc', type_method)
+            assert b.abc('wendal')
         
     def test_base(self):
         base_json = 'meta/base.json'

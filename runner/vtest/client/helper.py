@@ -53,3 +53,31 @@ def renderTpl(tpl,datas={}):
                       variable_start_string='${',
                       variable_end_string='}')
     return env.from_string(tpl).render(datas)
+
+class obj(object):
+    def __init__(self, d):
+        for a, b in d.iteritems():
+            if isinstance(b, (list, tuple)):
+                setattr(self, a, [obj(x) if isinstance(x, dict) else x for x in b])
+            else:
+                setattr(self, a, obj(b) if isinstance(b, dict) else b)
+                
+    def __getattr__(self, name):
+        return getattr(self.__dict__, name)
+                
+    def get(self, key, default_obj=None):
+        return self.__dict__.get(key) or default_obj
+    
+    def __setitem__(self, key, val):
+        setattr(self, key, val)
+        
+    def __iter__(self):
+        return self.__dict__.__iter__()
+    
+    def items(self):
+        return self.__dict__.items()
+    
+    
+def el(el_str, context):
+    con = obj(context)
+    return eval('context.' + el_str, {'context' : con})
