@@ -1,5 +1,6 @@
 package org.vtest;
 
+import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
@@ -12,6 +13,10 @@ public class VTestConfig {
 	public VTestConfig(String path) {
 		pp = new PropertiesProxy();
 		pp.setPaths(path);
+	}
+
+	public VTestConfig(Ioc ioc) {
+		pp = ioc.get(PropertiesProxy.class, VTests.VTEST_CONF);
 	}
 
 	public String getAppRoot() {
@@ -45,6 +50,14 @@ public class VTestConfig {
 
 	private int getInt(String key) {
 		return Integer.valueOf(pp.get(key));
+	}
+
+	public boolean getUseTestMode() {
+		return Boolean.parseBoolean(get(VTests.USE_TEST_MODE));
+	}
+
+	public int getTestMax() {
+		return getInt(VTests.TEST_MAX);
 	}
 
 }

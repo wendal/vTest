@@ -27,5 +27,12 @@ var ioc = {
 	dao : {
 		type :'org.nutz.dao.impl.NutDao',
 		args : [ {refer :"dataSource"}]
+	},
+	// 读取配置文件
+	"vtestConf" : {
+		type : "org.nutz.ioc.impl.PropertiesProxy",
+		fields : {
+			paths : ["vtest.properties"]
+		}
 	}
 };

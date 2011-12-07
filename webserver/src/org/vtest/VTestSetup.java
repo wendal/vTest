@@ -14,15 +14,23 @@ public class VTestSetup implements Setup {
 
 	private static final Log log = Logs.get();
 
+	private static Class<?>[] clzs = new Class<?>[]{Robot.class, Task.class, Report.class};
+
 	@Override
 	public void init(NutConfig config) {
 		log.info("DataBase Init");
 		Ioc ioc = config.getIoc();
 		NutDao dao = ioc.get(NutDao.class, "dao");
 		// 创建表
-		dao.create(Robot.class, false);
-		dao.create(Task.class, false);
-		dao.create(Report.class, false);
+		for (int i = 0; i < clzs.length; i++) {
+			dao.create(clzs[i], false);
+		}
+		// 测试数据
+		VTestConfig vc = new VTestConfig(ioc);
+		if (vc.getUseTestMode()) {
+			log.info("Add TestData to Database");
+			TestDataMaker.makeTestData(vc.getTestMax(), dao, clzs);
+		}
 	}
 
 	@Override

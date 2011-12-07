@@ -18,6 +18,12 @@ public class VTests {
 
 	public static final String APP_CLASSPATH = "app-classpath";
 
+	public static final String USE_TEST_MODE = "use-test-mode";
+
+	public static final String TEST_MAX = "test-max";
+
+	public static final String VTEST_CONF = "vtestConf";
+
 	public static final String MSG_OK = "ok";
 
 	public static Timestamp now() {

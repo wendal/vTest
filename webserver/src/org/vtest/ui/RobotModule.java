@@ -5,6 +5,7 @@ import org.nutz.ioc.annotation.InjectName;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Param;
+import org.vtest.TestDataMaker;
 import org.vtest.VTests;
 import org.vtest.model.Robot;
 
@@ -32,25 +33,8 @@ public class RobotModule extends BasicModule {
 
 	@At
 	public Object testData(@Param("num") int num) {
-		// 清空数据库
-		dao.clear(Robot.class);
-		// 添加测试数据
-		if (num == 0) {
-			num = 1;
-		}
-		for (int i = 0; i < num; i++) {
-			dao.fastInsert(getAnRobot());
-		}
+		TestDataMaker.makeTestData(num, dao, new Class<?>[]{Robot.class});
 		return VTests.MSG_OK;
-	}
-
-	public Robot getAnRobot() {
-		Robot robot = new Robot();
-		robot.setIpv4("192.168.1." + random.nextInt(255));
-		robot.setHnm(stringGenerator.next());
-		robot.setPrid(String.valueOf(random.nextInt(10000)));
-		robot.setLm(VTests.now());
-		return robot;
 	}
 
 }
