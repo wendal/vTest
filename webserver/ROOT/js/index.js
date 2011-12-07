@@ -55,9 +55,13 @@ function adjust() {
 };
 
 function bind() {
+    // head部分
     var bodyJq = $(document.body);
     bodyJq.delegate(".ci", "click", vtest.events.ciClick);
-
+    // grid的刷新
+    var bottons = $('.bottons');
+    bottons.delegate(".ref", "click", vtest.events.refresh);
+    bottons.delegate(".ref_time", "click", vtest.events.refreshTime);
 };
 
 function fontWithColor(msg, color) {
@@ -255,8 +259,8 @@ function showReport() {
             name: "total",
             text: "总耗时",
             show: true,
-            cellHtml : function(rowData){
-                // 单位 ms 
+            cellHtml: function(rowData) {
+                // 单位 ms
                 var re = rowData[this.name];
                 return fontWithColor(re + '', '#A53688') + "毫秒";
             }
@@ -299,6 +303,37 @@ window.vtest = {
                 }, 300, function() {
                 });
             }
+        },
+        refresh: function() {
+            var ref = $(this);
+            var gridName = ref.attr('grid');
+            var grid = vtest.grid[gridName + "Grid"];
+            var icon = $('i', ref);
+            icon.addClass('yes');
+            icon.oneTime('300ms', function(){
+                icon.removeClass('yes');
+            })
+            grid.grid("reload");
+        },
+        refreshTime: function() {
+            var ref = $(this);
+            var gridName = ref.attr('grid');
+            var grid = vtest.grid[gridName + "Grid"];
+            var icon = $('i', ref);
+            if(icon.hasClass('yes')) {
+                icon.removeClass("yes");
+                $('b', ref).first().html("定时刷新(关闭)");
+                ref.stopTime("refTime");
+            } else {
+                icon.addClass("yes");
+                $('b', ref).first().html("定时刷新(开启)");
+                var time = z.getIntAttr($('input', ref.parent().parent()), "value");
+                if(time) {
+                    ref.everyTime(time + 's', 'refTime', function() {
+                        grid.grid("reload");
+                    }, 0, true);
+                }
+            }
         }
     },
     baseConf: {
@@ -325,10 +360,10 @@ window.vtest = {
 $(document).ready(function() {
     // 初始化
     adjust();
-    // 事件绑定
-    bind();
     // 三个Grid展示
     showGrid();
+    // 事件绑定
+    bind();
     // 随着窗口变化调整
     window.onresize = adjust;
 });

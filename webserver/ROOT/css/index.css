@@ -126,6 +126,20 @@ ul li a {
     text-shadow: 1px 1px 0 #888888;
 }
 
+ul li div {
+    height: 20px;
+    margin-top: 3px;
+    margin-left: 5px;
+    cursor: pointer;
+    display: block;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+div input {
+    border-radius: 2px;
+}
+
 a.ci {
     color: #FFFFFF;
 }

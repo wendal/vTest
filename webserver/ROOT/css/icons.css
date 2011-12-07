@@ -11,7 +11,6 @@
     display: inline-block;
     vertical-align: middle;
     background: url("icons.png") no-repeat scroll 0 -32px transparent;
-    margin-right: 6px;
 }
 
 .icon.active {
@@ -23,3 +22,23 @@
     transform: rotate(90deg);
 }
 
+.icon.refresh{
+    background: url("icons.png") no-repeat scroll -128px -144px transparent;
+}
+
+.icon.refresh.yes{
+    background: url("icons.png") no-repeat scroll -128px -144px transparent;
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    filter: progid :DXImageTransform.Microsoft.BasicImage(rotation=4);
+    transform: rotate(360deg);
+}
+
+.icon.refresh_time{
+    background: url("icons.png") no-repeat scroll -112px -144px transparent;
+}
+
+.icon.refresh_time.yes{
+    background: url("icons.png") no-repeat scroll -96px -144px transparent;
+}
