@@ -20,8 +20,6 @@ body {
 }
 
 .vbody {
-    opacity: 0.5;
-    background: #AAAAAA;
     list-style: none;
 }
 
@@ -38,24 +36,62 @@ body {
 
 .workspace {
     float: left;
+    padding: 10px 5px;
 }
 
 .innerworkspace {
     width: 100%;
     height: 100%;
-    opacity: 0.5;
+    overflow: hidden;
+    white-space: normal;
+}
+
+.innerworkspace h3 {
+    background-color: rgba(0, 0, 255, 0.4);
+    border-radius: 8px 8px 0 0;
+    color: #FFFFFF;
+    padding: 8px 14px;
+    text-shadow: 1px 1px 2px #000000;
+}
+
+.innerworkspace .left_ws {
+    background-color: rgba(255, 200, 125, 0.6);
+    display: block;
+    float: left;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.innerworkspace .right_ws {
+    background-color: rgba(255, 255, 255, 0.6);
+    float: left;
+    display: block;
+    overflow: hidden;
+    vertical-align: top;
+    width: 300px;
+}
+
+.left_ws .list {
+    width: 100%;
+    overflow: hidden;
+}
+
+.left_ws .bottons {
+    height: 24px;
+    width: 100%;
+    background-color: #CCC;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#FFF), to(#FFF), color-stop(.5,#EEE), color-stop(.75,#DDD));
+    background: -moz-linear-gradient(top, #FFF, #EEE 50%, #DDD 75%, #FFF);
+    border-bottom: 1px solid #BBBBBB;
 }
 
 .robot {
-    background-color: #00CCAA;
 }
 
 .task {
-    background-color: #BB00AA;
 }
 
 .report {
-    background-color: #DD0000;
 }
 
 ul {
@@ -79,7 +115,7 @@ ul li {
 }
 
 ul li a {
-    margin-left: 2px;
+    margin-left: 5px;
     margin-right: 8px;
     border-radius: 4px 4px 4px 4px;
     cursor: pointer;

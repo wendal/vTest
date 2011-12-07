@@ -78,6 +78,7 @@
 
 .thead .grid_col:first-child {
     border-left: 0 none;
+    text-align: center;
 }
 
 .tbody .grid_col:last-child {
@@ -96,6 +97,11 @@
     overflow: hidden;
     padding-left: 12px;
     text-shadow: 1px 1px 2px #FFFFFF;
+}
+
+.thead .grid_col.multi_col {
+    padding-left: 0;
+    text-align: center;
 }
 
 .tbody .grid_col {
@@ -139,12 +145,16 @@
     white-space: nowrap;
 }
 
+.tbody .grid_col.multi_col {
+    padding: 4px 0;
+} 
+
 .thead .grid_col .multi {
-    margin-left: -12px;
+    
 }
 
 .tbody .grid_col .multi {
-    margin-left: -13px;
+    
 }
 
 .grid table {

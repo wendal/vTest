@@ -451,7 +451,7 @@ var dom = {
         var mul = 0;
         var html = "<tr>";
         if(true == opt.multiSelect) {
-            html += '<th  class="grid_col fixed" fixed="true" sindex="0">';
+            html += '<th  class="grid_col multi_col fixed" fixed="true" sindex="0">';
             html += '<div class="multi multi_head"><input type="checkbox" class="ck" ></div>';
             html += '</th>';
             mul++;
@@ -522,7 +522,7 @@ var dom = {
             }
             html += ' rownum="' + i + '" deep="' + deep + '" objId="' + objId + '">';
             if(true == opt.multiSelect) {
-                html += '<td  class="grid_col">';
+                html += '<td  class="grid_col multi_col">';
                 html += '<div class="multi"><input type="checkbox" class="ck" ></div>';
                 html += '</td>';
             }

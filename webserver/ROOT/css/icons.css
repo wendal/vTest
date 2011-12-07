@@ -2,6 +2,10 @@
  * 小图标
  */
 .icon {
+    -webkit-transition: all 300ms ease-in-out;
+    -moz-transition: all 300ms ease-in-out;
+    -o-transition: all 300ms ease-in-out;
+    transition: all 300ms ease-in-out;
     width: 16px;
     height: 16px;
     display: inline-block;
