@@ -1,6 +1,5 @@
 package org.vtest.model;
 
-import java.sql.Clob;
 import java.sql.Timestamp;
 
 import lombok.Data;
@@ -39,7 +38,8 @@ public class Task {
 
 	@Column
 	@Comment("任务配置清单")
-	private Clob detail;
+	@ColDefine(type=ColType.TEXT)
+	private String detail;
 
 	@Column
 	@Comment("任务被执行的数量，当某个机器人执行完毕后，会给这个数加一")

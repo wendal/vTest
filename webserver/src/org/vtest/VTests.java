@@ -1,6 +1,10 @@
 package org.vtest;
 
+import java.sql.Timestamp;
+
 public class VTests {
+
+	private VTests() {}
 
 	public static final String CONF_PATH = "vtest.properties";
 
@@ -13,5 +17,11 @@ public class VTests {
 	public static final String ADMIN_PORT = "admin-port";
 
 	public static final String APP_CLASSPATH = "app-classpath";
+
+	public static final String MSG_OK = "ok";
+
+	public static Timestamp now() {
+		return new Timestamp(System.currentTimeMillis());
+	}
 
 }

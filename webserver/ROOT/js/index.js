@@ -60,6 +60,10 @@ function bind() {
 
 };
 
+function fontWithColor(msg, color) {
+    return '<span style="color:' + color + ';">' + msg + '</span>';
+};
+
 function showGrid() {
     showRobot();
     showTask();
@@ -92,8 +96,12 @@ function showRobot() {
             show: true
         }],
         getData: function() {
-            // 这里举个例子,通过Ajax获取数据,然后在回调中返回Grid需要的数据
-
+            var gridJq = this;
+            $.getJSON('robot/list', function(data) {
+                gridJq.grid('load', {
+                    rowDatas: data
+                });
+            });
         },
         getId: function(rowData) {
             return rowData.id;
@@ -121,7 +129,20 @@ function showTask() {
         }, {
             name: "stat",
             text: "任务状态",
-            show: true
+            show: true,
+            cellHtml: function(rowData) {
+                // 任务状态，0 新创建，1 开始执行，2 已经完成
+                var re = rowData[this.name];
+                if(re == 0) {
+                    return "新创建";
+                } else if(re == 1) {
+                    return "开始执行";
+                } else if(re == 2) {
+                    return "已经完成";
+                } else {
+                    return "未知状态";
+                }
+            }
         }, {
             name: "ct",
             text: "创建时间",
@@ -134,21 +155,40 @@ function showTask() {
             name: "done",
             text: "完成次数",
             show: true,
-            width : 100
+            width: 100
+        }, {
+            name: "fnn",
+            text: "完成次数",
+            show: true,
+            width: 100,
+            cellHtml: function(rowData) {
+                // 表示 done>= 多少后，这个任务算完成
+                var re = rowData[this.name];
+                var done = rowData['done'];
+                if(done >= re) {
+                    return fontWithColor('任务完成', 'green');
+                } else {
+                    return "任务未完成";
+                }
+            }
         }, {
             name: "nok",
             text: "成功次数",
             show: true,
-            width : 100
+            width: 100
         }, {
             name: "nfail",
             text: "失败次数",
             show: true,
-            width : 100
+            width: 100
         }],
         getData: function() {
-            // 这里举个例子,通过Ajax获取数据,然后在回调中返回Grid需要的数据
-
+            var gridJq = this;
+            $.getJSON('task/list', function(data) {
+                gridJq.grid('load', {
+                    rowDatas: data
+                });
+            });
         },
         getId: function(rowData) {
             return rowData.id;
@@ -184,19 +224,50 @@ function showReport() {
         }, {
             name: "err",
             text: "运行结果",
-            show: true
+            show: true,
+            cellHtml: function(rowData) {
+                // 结果类型 0 表示成功，1 表示任务失败, 2 表示内部错误
+                var re = rowData[this.name];
+                if(re == 0) {
+                    return fontWithColor('成功', 'green');
+                } else if(re == 1) {
+                    return fontWithColor('失败', 'red');
+                } else if(re == 2) {
+                    return fontWithColor('内部错误', 'yellow');
+                } else {
+                    return "未知状态";
+                }
+            }
         }, {
             name: "step",
             text: "失败步骤",
-            show: true
+            show: true,
+            cellHtml: function(rowData) {
+                // 第几步失败的，0 表示没有失败，>0 表示第几步失败
+                var re = rowData[this.name];
+                if(re == 0) {
+                    return "没有失败";
+                } else {
+                    return "第" + fontWithColor(re + '', 'red') + "步操作出现错误";
+                }
+            }
         }, {
             name: "total",
             text: "总耗时",
-            show: true
+            show: true,
+            cellHtml : function(rowData){
+                // 单位 ms 
+                var re = rowData[this.name];
+                return fontWithColor(re + '', '#A53688') + "毫秒";
+            }
         }],
         getData: function() {
-            // 这里举个例子,通过Ajax获取数据,然后在回调中返回Grid需要的数据
-
+            var gridJq = this;
+            $.getJSON('report/list', function(data) {
+                gridJq.grid('load', {
+                    rowDatas: data
+                });
+            });
         },
         getId: function(rowData) {
             return rowData.id;
@@ -231,7 +302,7 @@ window.vtest = {
         }
     },
     baseConf: {
-        rowDD: true,
+        rowDD: false,
         colDD: true,
         multiSelect: true,
         hideCols: false,

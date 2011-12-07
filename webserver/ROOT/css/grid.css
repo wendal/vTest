@@ -147,6 +147,7 @@
 
 .tbody .grid_col.multi_col {
     padding: 4px 0;
+    text-align: center;
 } 
 
 .thead .grid_col .multi {

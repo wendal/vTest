@@ -1,6 +1,5 @@
 package org.vtest.model;
 
-import java.sql.Clob;
 import java.sql.Timestamp;
 
 import lombok.Data;
@@ -43,7 +42,8 @@ public class Report {
 
 	@Column
 	@Comment("具体的失败原因")
-	private Clob msg;
+	@ColDefine(type = ColType.TEXT)
+	private String msg;
 
 	@Column
 	@Comment("执行的总时间，单位 ms")

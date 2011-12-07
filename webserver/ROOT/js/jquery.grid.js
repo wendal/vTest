@@ -231,7 +231,7 @@ var util = {
      * 获得这个Cell的Html内容
      */
     cellHtml: function(column, rowData) {
-        var html = column.cellHtml(rowData);
+        var html = column.cellHtml(rowData) + '';
         return html ? html : "";
     },
     /**
@@ -370,7 +370,8 @@ var dom = {
      * Grid初始化，搭建骨架
      */
     init: function(opt) {
-        $('<div class="grid ' + opt.gridCls + '"></div>').appendTo(this);
+        var gridCls = opt.gridCls ? opt.gridCls : '';
+        $('<div class="grid ' + gridCls + '"></div>').appendTo(this);
     },
     /**
      * 列宽改变
@@ -399,8 +400,8 @@ var dom = {
         }
     },
     bodyFetchHead: function(selection) {
-        var colgrpHeadHtml = $('.grid_head .colgrp_head').html();
-        $('.grid_body .colgrp_body').empty().append(colgrpHeadHtml);
+        var colgrpHeadHtml = $('.grid_head .colgrp_head', selection).html();
+        $('.grid_body .colgrp_body', selection).empty().append(colgrpHeadHtml);
     },
     _createTableFun: function(opt) {
         if(opt.fun) {
@@ -514,7 +515,7 @@ var dom = {
         for(var i = 0; i < rowDatas.length; i++) {
             var rowData = rowDatas[i];
             var objId = util.objId(opt, rowData);
-            html += '<tr class="grid_row rn' + i + ' rn' + objId + ' dep' + deep;
+            html += '<tr class="grid_row rn' + i + ' rnobj' + objId + ' dep' + deep;
             if(parentObjId) {
                 html += ' prt' + parentObjId + '"' + ' parentObjId="' + parentObjId + '"';
             } else {
@@ -687,11 +688,11 @@ var dom = {
      */
     recoverCheckedAndActivedRows: function(selection, opt) {
         if(opt.tmp.activedRow != null) {
-            $('.tbody .rn' + opt.tmp.activedRow, selection).addClass('active_row');
+            $('.tbody .rnobj' + opt.tmp.activedRow, selection).addClass('active_row');
         }
         if(opt.tmp.checkedRows.length > 0) {
             $.each(opt.tmp.checkedRows, function(index, checkedRow) {
-                $('.tbody .rn' + checkedRow, selection).addClass('check_row');
+                $('.tbody .rnobj' + checkedRow, selection).addClass('check_row');
             });
             dom.changeCkbStatus(opt, selection);
         }
@@ -809,7 +810,7 @@ var data = {
         var bindSomeRow = false;
         for(var i = rowDatas.length - 1; i >= 0; i--) {
             var rowData = rowDatas[i];
-            var row = $('.rn' + util.objId(opt, rowData), selection);
+            var row = $('.rnobj' + util.objId(opt, rowData), selection);
             // 绑定本身
             if(row.length > 0 && (row.data(ROW_DATA) == null || row.data(ROW_DATA) == undefined)) {
                 row.data(ROW_DATA, rowData);
@@ -840,7 +841,7 @@ var data = {
     unbind: function(rowDatas, opt, selection) {
         for(var i = rowDatas.length - 1; i >= 0; i--) {
             var rowData = rowDatas[i];
-            var row = $('.rn' + util.objId(opt, rowData), selection);
+            var row = $('.rnobj' + util.objId(opt, rowData), selection);
             // 先删除孩子
             var childrenData = opt.getChildren(rowData);
             if(row.length > 0 && $.isArray(childrenData) && childrenData.length > 0) {
@@ -952,7 +953,13 @@ var commands = {
         var cell;
         var selection = util.selection(this);
         if(( typeof rnOrId == 'number' || typeof rnOrId == 'string') && ( typeof cnOrName == 'number' || typeof cnOrName == 'string')) {
-            row = $('.grid_body .tbody .rn' + rnOrId, selection);
+            var rn;
+            if( typeof rnOrId == 'number') {
+                rn = '.rn' + rnOrId;
+            } else {
+                rn = '.rnobj' + rnOrId;
+            }
+            row = $('.grid_body .tbody ' + rn, selection);
             if(row && row.length > 0) {
                 cell = $('.cn' + cnOrName, row);
                 if(cell && cell.length > 0) {
@@ -1062,7 +1069,13 @@ var commands = {
         var row;
         var selection = util.selection(this);
         if( typeof rnOrId == 'number' || typeof rnOrId == 'string') {
-            row = $('.grid_body .tbody .rn' + rnOrId, selection);
+            var rn;
+            if( typeof rnOrId == 'number') {
+                rn = '.rn' + rnOrId;
+            } else {
+                rn = '.rnobj' + rnOrId;
+            }
+            row = $('.grid_body .tbody ' + rn, selection);
             if(row && row.length > 0) {
                 return row;
             }
@@ -1158,7 +1171,7 @@ var commands = {
             var oldObjId = util.objId(opt, oldRowData);
             $.extend(oldRowData, rowData);
             // 更新tbody中的数据
-            var row = $('.grid_body .tbody .rn' + oldObjId, selection);
+            var row = $('.grid_body .tbody .rnobj' + oldObjId, selection);
             for(var i = opt.columns.length - 1; i >= 0; i--) {
                 var column = opt.columns[i];
                 var cell = $('.cn' + column.name + ' .grid_colname', row);
@@ -1178,7 +1191,13 @@ var commands = {
         var selection = util.selection(this);
         var opt = util.opt(selection);
         if( typeof rnOrId == 'number' || typeof rnOrId == 'string') {
-            row = $('.grid_body .tbody .rn' + rnOrId, selection);
+            var rn;
+            if( typeof rnOrId == 'number') {
+                rn = '.rn' + rnOrId;
+            } else {
+                rn = '.rnobj' + rnOrId;
+            }
+            row = $('.grid_body .tbody ' + rn, selection);
         }
         // 判断，激活
         if(row && row.length > 0) {
@@ -1194,7 +1213,13 @@ var commands = {
         var selection = util.selection(this);
         var opt = util.opt(selection);
         if( typeof rnOrId == 'number' || typeof rnOrId == 'string') {
-            row = $('.grid_body .tbody .rn' + rnOrId, selection);
+            var rn;
+            if( typeof rnOrId == 'number') {
+                rn = '.rn' + rnOrId;
+            } else {
+                rn = '.rnobj' + rnOrId;
+            }
+            row = $('.grid_body .tbody ' + rn, selection);
         } else {
             row = $('.grid_body .tbody .active_row', selection);
         }
@@ -1216,7 +1241,13 @@ var commands = {
         var opt = util.opt(selection);
         if(opt.multiSelect == true) {
             if( typeof rnOrId == 'number' || typeof rnOrId == 'string') {
-                row = $('.grid_body .tbody .rn' + rnOrId, selection);
+                var rn;
+                if( typeof rnOrId == 'number') {
+                    rn = '.rn' + rnOrId;
+                } else {
+                    rn = '.rnobj' + rnOrId;
+                }
+                row = $('.grid_body .tbody ' + rn, selection);
             } else if($.isArray(rnOrId)) {
                 var rnOrIds = rnOrId;
                 $.each(rnOrIds, function(index, ri) {
@@ -1240,7 +1271,13 @@ var commands = {
         var opt = util.opt(selection);
         if(opt.multiSelect == true) {
             if( typeof rnOrId == 'number' || typeof rnOrId == 'string') {
-                row = $('.grid_body .tbody .rn' + rnOrId, selection);
+                var rn;
+                if( typeof rnOrId == 'number') {
+                    rn = '.rn' + rnOrId;
+                } else {
+                    rn = '.rnobj' + rnOrId;
+                }
+                row = $('.grid_body .tbody ' + rn, selection);
             } else if($.isArray(rnOrId)) {
                 var rnOrIds = rnOrId;
                 $.each(rnOrIds, function(index, ri) {

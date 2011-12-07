@@ -12,6 +12,8 @@ body {
 }
 
 .vhead {
+    padding-top: 2px;
+    line-height: 24px;
     line-height: 30px;
     white-space: nowrap;
     width: 100%;
@@ -55,7 +57,6 @@ body {
 }
 
 .innerworkspace .left_ws {
-    background-color: rgba(255, 200, 125, 0.6);
     display: block;
     float: left;
     overflow: hidden;
