@@ -48,34 +48,17 @@ class WebClient(object):
 根据datas渲染tpl模板
 '''
 def renderTpl(tpl,datas={}):
-    from jinja2 import Environment
-    env = Environment(autoescape=False,
-                      variable_start_string='${',
-                      variable_end_string='}')
-    return env.from_string(tpl).render(datas)
-
-class obj(object):
-    def __init__(self, d):
-        for a, b in d.iteritems():
-            if isinstance(b, (list, tuple)):
-                setattr(self, a, [obj(x) if isinstance(x, dict) else x for x in b])
-            else:
-                setattr(self, a, obj(b) if isinstance(b, dict) else b)
-                
-    def __getattr__(self, name):
-        return getattr(self.__dict__, name)
-                
-    def get(self, key, default_obj=None):
-        return self.__dict__.get(key) or default_obj
-    
-    def __setitem__(self, key, val):
-        setattr(self, key, val)
-        
-    def __iter__(self):
-        return self.__dict__.__iter__()
-    
-    def items(self):
-        return self.__dict__.items()
+    start = tpl.find('${')
+    end = -1
+    if start > -1 :
+        end = tpl.find('}',start)
+    if start > -1 and end > -1 :
+        pre = tpl[0:start]
+        elx = tpl[start+2:end]
+        post = tpl[end:]
+        return renderTpl(pre + str(el(elx, datas)) + post)
+    print 'render result -->', tpl,'tpl->>', tpl
+    return tpl
     
     
 def el(el_str, context):
@@ -86,7 +69,7 @@ def el(el_str, context):
             elx += '["' + p[0:p.find('[')] + '"]' + p[p.find('['):]
         else :
             elx += '["' + p + '"]'
-    elx = 'cxt'+elx
+    elx = 'cxt' + elx
     print elx
     return eval(elx, {'cxt' : context})
 

@@ -10,6 +10,7 @@ import time
 import uuid
 import os
 import socket
+import vtest.client.bmp as bmp
 
 log = logging.getLogger('vtest')
 
@@ -65,7 +66,7 @@ class BaseHandler(object):
         result = renderTpl(tpl, self.context)
         if isinstance(result, unicode) :
             result = result.encode()
-            #print result
+        print result
         return result
     
     def _eval(self, el_str):
@@ -127,8 +128,8 @@ class BaseHandler(object):
         return NEXT_NODE #其他code?无意义,返回标准的
     
     def control_switch(self, args):
-        for k,nodes in args :
-            if k != 'default' and self._eval(k) :
+        for k,nodes in args.items() :
+            if k != 'default' and eval(k, None, self.context) :
                 return self.control_foreach(nodes)
         if args.get('default') :
             return self.control_foreach(args.get('default'))
@@ -185,21 +186,54 @@ class BaseHandler(object):
     
     def img_make(self, file=None, width=800, height=640, r=0, g=90 , b=90):
         with open(self._render(file), 'w') as f :
-            import bmp
             img = bmp.BitMap( width, height, bmp.Color(r,g,b))
             f.write(img.getBitmap())
         return NEXT_NODE
 
-    def json_parse(self, source='{}', dest=None):
+    def json_parse(self, source='', dest=None):
         if source.startswith('context') :
-            self.context[dest] = json.loads(self.context[source[len('context:'):]])
+            self.context[dest] = json.loads(self.context[source[8:]])
         elif source.startswith('file') :
-            with open(self._render(source[len('file:'):])) as f :
+            with open(self._render(source[5:])) as f :
                 self.context[dest] = json.load(f)
+        else :
+            log.error('Not a vaild val -->' + source)
+            return FAIL
         return NEXT_NODE
 
-    def json_found(self, source, type, match):
-        pass #TODO
+    def json_found(self, source=None, dest=None, tp=None, match=None):
+        source = el(source, self.context)
+        res = self._match(source, match, tp == 'list')
+        self.context[dest] = res
+        return NEXT_NODE
+    
+    def _match(self, source, match, return_list):
+        if isinstance(source, list) :
+            res = []
+            for s in source :
+                r = self._match(s, match, return_list)
+                if r and len(r) :
+                    if return_list :
+                        res.append(s)
+                    else :
+                        return [s]
+            return res
+        if isinstance(source, dict) :
+            res = []
+            for s in source :
+                flag = True
+                for k,v in match.items() :
+                    if not s.get(k) or s[k] != v :
+                        flag = False
+                        break
+                if flag :
+                    if return_list:
+                        res.append(s)
+                    else :
+                        return [s]
+            return res
+        
+        
 
     def set(self, name=None, value=None, remove=None):
         if remove :
@@ -209,8 +243,16 @@ class BaseHandler(object):
     
 
     
-    def random(self):
-        pass #TODO
+    def random(self, name=None, tp='int', min=0, max=1, values=None):
+        import random as r
+        if values :
+            self.context[name] = r.sample(values, 1)
+        else :
+            if tp == 'int' :
+                self.context[name] = r.randint(min, max)
+            else :
+                s = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPMNBVCXZLKJHGFDSA'
+                self.context[name] = ''.join(r.sample(list(s), r.randint(min, max) or 1))
         
     def extends(self, type_name=None, type_method=None):
         if type_name and type_method :

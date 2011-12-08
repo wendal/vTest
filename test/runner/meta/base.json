@@ -15,10 +15,18 @@
             "args": {
                 "var_index": "i",
                 "start": 0,
-                "end": 10,
+                "end": 2,
                 "delay": 100,
                 "run": [
                     {"node": "user.index"},
+                    {
+                    	"type" : "control.switch",
+                    	"args" : {
+                    		"JsonObj == None" : [
+                    			{"node" : "control.fail"}
+                    		]
+                    	}
+                    },
                     {"node": "control.next"}
                 ]
             }
