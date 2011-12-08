@@ -1,0 +1,432 @@
+._masker_ele {
+    opacity: 0.2;
+}
+
+.grid_loading {
+    width: 100%;
+    height: 100%;
+    background-color: #FFFFFF;
+    opacity: 0.5;
+    z-index: 2000;
+}
+
+.grid_loading div {
+    text-align: center;
+    color: #000000;
+}
+
+.grid {
+    position: relative;
+}
+
+.grid_title_bar {
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-style: solid solid none solid;
+    border-width: 0;
+    padding: 0.3em 0.2em 0.2em 0.3em;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    height: 24px;
+}
+
+.grid_title {
+    float: left;
+    color: #000000;
+    font-weight: bold;
+}
+
+.grid_head {
+    background-color: #CCC;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#FFF), to(#FFF), color-stop(.5,#EEE), color-stop(.75,#DDD));
+    background: -moz-linear-gradient(top, #FFF, #EEE 50%, #DDD 75%, #FFF);
+    border-bottom: 1px solid #BBBBBB;
+    height: 24px;
+}
+
+.grid_body {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: rgba(255, 255, 255, 0.6);
+    position: relative;
+}
+
+.grid_body_masker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.grid_top_bar {
+}
+
+.grid_bottom_bar {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-style: none solid solid solid;
+    border-width: 0;
+    padding: 0.3em 0.2em 0.2em 0.3em;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    height: 24px;
+}
+
+.thead .grid_col:first-child {
+    border-left: 0 none;
+    text-align: center;
+}
+
+.tbody .grid_col:last-child {
+    border-right: 0 none;
+}
+
+.thead .grid_col {
+    cursor: default;
+    text-align: left;
+    color: #000000;
+    font-weight: bold;
+    position: relative;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #BBBBBB;
+    line-height: 22px;
+    overflow: hidden;
+    padding-left: 12px;
+    text-shadow: 1px 1px 2px #FFFFFF;
+}
+
+.thead .grid_col.multi_col {
+    padding-left: 0;
+    text-align: center;
+}
+
+.tbody .grid_col {
+    border-right: 1px solid #AAAAAA;
+    text-align: left;
+    overflow: hidden;
+    padding: 4px 4px 4px 13px;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.tbody .tree_node {
+    -webkit-transition: all 150ms ease-in-out;
+    -moz-transition: all 150ms ease-in-out;
+    -o-transition: all 150ms ease-in-out;
+    transition: all 150ms ease-in-out;
+}
+
+.tbody .tree_folder {
+    background: url("icons.png") no-repeat scroll 0 -32px transparent;
+}
+
+.tbody .tree_folder_open {
+    background: url("icons.png") no-repeat scroll 0 -32px transparent;
+    -moz-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    filter: progid :DXImageTransform.Microsoft.BasicImage(rotation=1);
+    transform: rotate(90deg);
+}
+
+.tbody .tree_file {
+    background: none;
+}
+
+.tbody .tree_place {
+    background: none;
+}
+
+.grid_col {
+    white-space: nowrap;
+}
+
+.tbody .grid_col.multi_col {
+    padding: 4px 0;
+    text-align: center;
+} 
+
+.thead .grid_col .multi {
+    
+}
+
+.tbody .grid_col .multi {
+    
+}
+
+.grid table {
+    table-layout: fixed;
+}
+
+.grid_th_resize {
+    cursor: col-resize;
+    float: right;
+    display: inline;
+    height: 24px;
+    overflow: hidden;
+    margin-right: -1px;
+}
+
+.grid_th_noresize {
+    cursor: default;
+    float: right;
+    display: inline;
+    height: 24px;
+    overflow: hidden;
+}
+
+.grid_th {
+    height: 17px;
+    overflow: hidden;
+    position: relative;
+}
+
+.grid_th_nosort {
+    cursor: default;
+}
+
+.grid_th_sort {
+    cursor: pointer;
+}
+
+.grid_sort {
+    float: left;
+    display: inline-block;
+    margin-left: -13px;
+    display: none;
+}
+
+.grid_colname {
+    float: left;
+}
+
+.grid_sort_asc {
+    height: 12px;
+    width: 16px;
+    overflow: hidden;
+    position: absolute;
+    background: url('icons.png') no-repeat -16px -176px;
+    opacity: 0.3;
+}
+
+.grid_sort_desc {
+    margin-top: 6px;
+    height: 12px;
+    width: 16px;
+    overflow: hidden;
+    position: absolute;
+    background: url('icons.png') no-repeat 0 -176px;
+    opacity: 0.3;
+}
+
+.tbody tr {
+    line-height: 22px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.tbody tr:nth-child(2n) {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.tbody tr.check_row {
+    background-color: #12B;
+    color: #FFFFFF;
+    box-shadow: 0 0 6px #FFF;
+    font: bold;
+}
+
+.tbody tr.active_row {
+    background-color: #3333AA;
+}
+
+.grid_body .tbody tr.stopDragging {
+    cursor: no-drop;
+}
+
+.active_sort {
+    display: inline;
+}
+
+.sort_show {
+    opacity: 1.0;
+}
+
+.grid_fun {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 24px;
+    cursor: pointer;
+}
+
+.grid_menu {
+    display: none;
+    position: absolute;
+    top: 24px;
+    right: 0;
+    background-color: #CCC;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#FFF), to(#FFF), color-stop(.5,#EEE), color-stop(.75,#DDD));
+    background: -moz-linear-gradient(top, #FFF, #EEE 50%, #DDD 75%, #FFF);
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 0 10px #888888;
+    padding: 4px;
+    width: 100px;
+    z-index: 10000;
+    list-style: none outside none;
+}
+
+.grid_menu li div b {
+    cursor: default;
+    line-height: 24px;
+    margin: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.grid_fun .menu_icon {
+    display: none;
+    position: absolute;
+    top: 4px;
+    height: 16px;
+    background: url('icons.png') no-repeat -32px -176px;
+}
+
+.grid_row {
+}
+
+.tbody tr.dragging_row {
+}
+
+.dragging_bottom {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+}
+
+.dragging_move {
+    width: 100%;
+}
+
+.dragging_active {
+}
+
+.dragging_moveto {
+    cursor: n-resize;
+    position: relative;
+}
+
+.dragging_movein {
+    cursor: no-drop;
+}
+
+.dragging_moveto.dragging_active {
+    background-color: #3333AA;
+    box-shadow: 0 0 6px #FFFFFF;
+    opacity: 0.6;
+}
+
+.dragging_movein.dragging_active {
+    cursor: s-resize;
+}
+
+.green_line {
+    background-color: #006600;
+    opacity: 0.7;
+    height: 1px;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    position: absolute;
+    display: none;
+}
+
+.dragging_helper {
+    background-color: rgba(255,255,255, 0.6);
+    color: rgba(0,0,0, 0.6);
+    border: 1px solid #AAAAAA;
+    border-radius: 5px;
+    font-size: 13px;
+    line-height: 18px;
+    overflow: hidden;
+    padding: 2px 4px 4px;
+    text-align: center;
+    z-index: 500;
+    position: absolute;
+    width: 100px;
+}
+
+.dragging_helper span {
+    white-space: nowrap;
+}
+
+.dragging_hid {
+    display: none;
+}
+
+.coldragging_bottom {
+    z-index: 1000;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.coldragging_bottom .container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    list-style: none;
+}
+
+.coldragging_move {
+    height: 100%;
+    float: left;
+}
+
+.coldragging_moveto {
+    position: relative;
+    cursor: w-resize;
+}
+
+.coldragging_active {
+}
+
+.coldragging_moveto.coldragging_active {
+    background-color: #00CC00;
+    opacity: 0.5;
+}
+
+.show_position {
+    position: absolute;
+    top: 24px;
+    right: -8px;
+    height: 32px;
+    width: 32px;
+    background: url('icons.png') no-repeat -48px -176px;
+    display: none;
+}
+
+.coldragging_moveover {
+    cursor: no-drop;
+}
+
+.mask_col {
+    height: 100%;
+    background-color: #00CC00;
+    opacity: 0.5;
+    z-index: 200;
+    position: absolute;
+    top: 0;
+}
+

@@ -1,0 +1,154 @@
+body {
+    background: url('p2.jpg') no-repeat fixed center bottom;
+    background-color: #667788;
+    overflow: hidden;
+}
+
+.bg {
+}
+
+.vdiv {
+    position: absolute;
+}
+
+.vhead {
+    padding-top: 2px;
+    line-height: 24px;
+    line-height: 30px;
+    white-space: nowrap;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.vbody {
+    list-style: none;
+}
+
+.vfooter {
+    opacity: 0.5;
+    height: 25px;
+    line-height: 20px;
+    white-space: nowrap;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    background: #3333AA;
+}
+
+.workspace {
+    float: left;
+    padding: 10px 5px;
+}
+
+.innerworkspace {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    white-space: normal;
+}
+
+.innerworkspace h3 {
+    background-color: rgba(0, 0, 255, 0.4);
+    border-radius: 8px 8px 0 0;
+    color: #FFFFFF;
+    padding: 8px 14px;
+    text-shadow: 1px 1px 2px #000000;
+}
+
+.innerworkspace .left_ws {
+    display: block;
+    float: left;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.innerworkspace .right_ws {
+    background-color: rgba(255, 255, 255, 0.6);
+    float: left;
+    display: block;
+    overflow: hidden;
+    vertical-align: top;
+    width: 300px;
+}
+
+.left_ws .list {
+    width: 100%;
+    overflow: hidden;
+}
+
+.left_ws .bottons {
+    height: 24px;
+    width: 100%;
+    background-color: #CCC;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#FFF), to(#FFF), color-stop(.5,#EEE), color-stop(.75,#DDD));
+    background: -moz-linear-gradient(top, #FFF, #EEE 50%, #DDD 75%, #FFF);
+    border-bottom: 1px solid #BBBBBB;
+}
+
+.robot {
+}
+
+.task {
+}
+
+.report {
+}
+
+ul {
+    height: 100%;
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+}
+
+ul:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+ul li {
+    float: left;
+}
+
+ul li a {
+    margin-left: 5px;
+    margin-right: 8px;
+    border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+    display: block;
+    padding-left: 6px;
+    padding-right: 20px;
+    text-shadow: 1px 1px 0 #888888;
+}
+
+ul li div {
+    height: 20px;
+    margin-top: 3px;
+    margin-left: 5px;
+    cursor: pointer;
+    display: block;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+div input {
+    border-radius: 2px;
+}
+
+a.ci {
+    color: #FFFFFF;
+}
+
+a.ci.active {
+    color: #222222;
+    background-color: rgba(200, 200, 200, 0.7);
+}
+
+a:link {
+    text-decoration: none;
+}
