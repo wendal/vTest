@@ -37,7 +37,7 @@ class BaseHandler(object):
                                         'ipv4' : socket.gethostbyname(socket.gethostname())
                                       }
                         }
-        log.debug('Robot init context -->\n' + json.dumps(self.context, indent=2))
+        log.debug('Robot init context -->\n' + json.dumps(self.context, indent=2, ensure_ascii=False))
         self.task = task
         
     def run(self):
@@ -85,7 +85,7 @@ class BaseHandler(object):
         return (headers, params)
     
     def run_node(self, node):
-        log.debug("Run node --> " + json.dumps(node))
+        log.debug("Run node --> " + json.dumps(node, indent=2, ensure_ascii=False))
         try :
             node_type = node['type'].replace('.', '_')
             type_method = self.__getattribute__(node_type)

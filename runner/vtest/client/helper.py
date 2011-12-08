@@ -79,5 +79,26 @@ class obj(object):
     
     
 def el(el_str, context):
-    con = obj(context)
-    return eval('context.' + el_str, {'context' : con})
+    ps = el_str.split('.')
+    elx = ''
+    for p in ps :
+        if p.find('[') > 0 :
+            elx += '["' + p[0:p.find('[')] + '"]' + p[p.find('['):]
+        else :
+            elx += '["' + p + '"]'
+    elx = 'cxt'+elx
+    print elx
+    return eval(elx, {'cxt' : context})
+
+
+
+
+
+
+
+
+
+
+
+
+
