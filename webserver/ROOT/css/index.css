@@ -215,3 +215,74 @@ a.ci.active {
 a:link {
     text-decoration: none;
 }
+
+.masker {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.masker .bg {
+    background: none repeat scroll 0 0 #000000;
+    opacity: 0.6;
+}
+
+.fg {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 32px;
+}
+
+.close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: url("icons.png") no-repeat scroll -160px -128px transparent;
+    height: 32px;
+    width: 32px;
+}
+
+.mk_title {
+    text-align: center;
+    margin: 20px auto;
+    padding: 2px;
+    width: 150px;
+    font-size: 20px;
+    line-height: 25px;
+    font-weight: bold;
+    border-radius: 4px 4px 4px 4px;
+    background-color: rgba(10,10,10, 0.5);
+    color: #aaaaaa;
+    text-shadow: 1px 1px 0 #888888;
+    height: 30px;
+}
+
+.mk_txt {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 0 none;
+    border-radius: 8px 8px 8px 8px;
+    color: #EEEE00;
+    font-family: Courier;
+    font-size: 12px;
+    line-height: 20px;
+    padding: 10px;
+    margin: 20px auto;
+    width: 100%;
+    height: 70%;
+    display: block;
+}
+
+.task_bottons {
+    padding: 8px;
+    text-align: center;
+}
+
+.task_bottons a {
+    color: #FFAA00;
+    cursor: pointer;
+    font-size: 12px;
+    margin: 0 16px;
+}

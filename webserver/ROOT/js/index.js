@@ -52,6 +52,8 @@ function adjust() {
     if(vtest.grid.reportGrid) {
         vtest.grid.reportGrid.grid("resize");
     }
+
+    adjustMasker();
 };
 
 function bind() {
@@ -74,6 +76,11 @@ function bind() {
     // 查看report
     var reportEditDiv = $('.workspace .report .right_ws', bodyJq);
     reportEditDiv.delegate("table tbody td a", "click", vtest.events.showReportErrMsg);
+    // 查看任务详细配置
+    var taskEditDiv = $('.workspace .task .right_ws', bodyJq);
+    taskEditDiv.delegate(".task_detail", "click", vtest.events.showTaskDetail);
+    // 关闭masker
+    bodyJq.delegate("#close", "click", vtest.events.closeMasker);
 };
 
 function fontWithColor(msg, color) {
@@ -240,7 +247,7 @@ function showTask() {
             return rowData.id;
         },
         afterActive: function(rowData) {
-
+            showTaskDetail(rowData);
         }
     });
     taskDiv.grid(taskConf);
@@ -248,6 +255,44 @@ function showTask() {
     // 右边编辑框
     var editDiv = $('.workspace .task .right_ws', document.body);
     editDiv.append('<h2>没有选中信息!</h2>');
+};
+
+function showTaskDetail(rowData) {
+    var editDiv = $('.workspace .task .right_ws', document.body);
+    editDiv.empty();
+    //
+    var stat = rowData.stat;
+    var finish = false;
+    if(stat == 0) {
+        stat = "新创建";
+    } else if(stat == 1) {
+        stat = "开始执行";
+    } else if(stat == 2) {
+        stat = "已经完成";
+        finish = true;
+    } else {
+        stat = "未知状态";
+    }
+    var rohtml = '<div class="imgs"><img src="../css/task_128.png"></div>';
+    rohtml += '<div class="infolist">';
+    rohtml += '<table cellspacing="0" cellpadding="0" border="0"><tbody>';
+    rohtml += '<tr><td class="tkey">任务名称</td><td class="tvalue">' + rowData.name + '</td></tr>';
+    rohtml += '<tr><td class="tkey">任务状态</td><td class="tvalue">' + stat + '</td></tr>';
+    rohtml += '<tr><td class="tkey">目标次数</td><td class="tvalue">' + rowData.fnn + '</td></tr>';
+    rohtml += '<tr><td class="tkey">完成次数</td><td class="tvalue">' + rowData.done + '</td></tr>';
+    rohtml += '<tr><td class="tkey">成功次数</td><td class="tvalue">' + fontWithColor(rowData.nok, 'green') + '</td></tr>';
+    rohtml += '<tr><td class="tkey">失败次数</td><td class="tvalue">' + fontWithColor(rowData.nfail, "red") + '</td></tr>';
+    rohtml += '</tbody></table>';
+    rohtml += '</div>';
+    // 查看配置按钮
+    // 导出对应Report按钮
+    rohtml += '<div class="task_bottons"><a class="task_detail">查看详细配置</a>';
+    if(finish)
+        rohtml += '<a target="_balnk" href="task/showResult?id=' + rowData.id + '">查看完整结果</a>';
+    rohtml += '</div>';
+    editDiv.append(rohtml);
+    // 记录detail
+    vtest.taskDetail = rowData.detail;
 };
 
 function showReport() {
@@ -356,7 +401,7 @@ function showReportDetail(rowData) {
         if(step != 0 && step == j) {
             rohtml += '<td class="tvalue">' + fontWithColor('失败', 'red') + '</td>';
             rohtml += '<td class="tvalue"><a>查看</a></td>';
-        }else{
+        } else {
             rohtml += '<td class="tvalue">成功</td>';
             rohtml += '<td class="tvalue"></td>';
         }
@@ -368,6 +413,40 @@ function showReportDetail(rowData) {
     // 数据绑定
     vtest.reportErrMsg = rowData.msg;
 };
+
+function masker() {
+    // 所有元素透明话
+    $(document.body).children().addClass('_mask');
+    // 添加masker
+    var html = '<div class="masker">';
+    html += '<div class="bg"></div>';
+    html += '<div class="fg"></div>';
+    html += '<div id="close" class="close"></div>';
+    html += '</div>';
+
+    $(document.body).append(html);
+    adjustMasker();
+};
+
+function adjustMasker() {
+    var masker = $('.masker', document.body);
+    if(masker && masker.length > 0) {
+        var winBox = z.winsz();
+        masker.css({
+            height: winBox.height,
+            width: winBox.width
+        });
+        masker.children().first().css({
+            height: winBox.height,
+            width: winBox.width
+        });
+    }
+};
+
+function delMasker() {
+    $('.masker', document.body).remove();
+    $(document.body).children().removeClass('_mask');
+}
 
 window.vtest = {
     po: 0,
@@ -430,8 +509,22 @@ window.vtest = {
                 }
             }
         },
-        showReportErrMsg : function(){
-            alert(vtest.reportErrMsg);
+        showReportErrMsg: function() {
+            masker();
+            // masker中加入内容
+            var html = '<div class="mk_title">错误信息</div><textarea class="mk_txt"></textarea>';
+            $('.masker .fg', document.body).append(html);
+            $('.masker .fg .mk_txt', document.body).val(vtest.reportErrMsg);
+        },
+        showTaskDetail: function() {
+            masker();
+            // masker中加入内容
+            var html = '<div class="mk_title">详细配置</div><textarea class="mk_txt"></textarea>';
+            $('.masker .fg', document.body).append(html);
+            $('.masker .fg .mk_txt', document.body).val(vtest.taskDetail);
+        },
+        closeMasker: function() {
+            delMasker();
         }
     },
     baseConf: {
@@ -453,7 +546,8 @@ window.vtest = {
         taskGrid: null,
         reportGrid: null
     },
-    reportErrMsg : null
+    reportErrMsg: null,
+    taskDetail: null
 };
 
 $(document).ready(function() {
