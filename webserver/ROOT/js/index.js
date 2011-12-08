@@ -62,6 +62,15 @@ function bind() {
     var bottons = $('.bottons');
     bottons.delegate(".ref", "click", vtest.events.refresh);
     bottons.delegate(".ref_time", "click", vtest.events.refreshTime);
+    // 输入框只能输入数字
+    $("input.number", bodyJq).keypress(function(event) {
+        var keyCode = event.keyCode;
+        if((keyCode >= 48 && keyCode <= 57)) {
+            event.returnValue = true;
+        } else {
+            event.returnValue = false;
+        }
+    });
 };
 
 function fontWithColor(msg, color) {
@@ -310,7 +319,7 @@ window.vtest = {
             var grid = vtest.grid[gridName + "Grid"];
             var icon = $('i', ref);
             icon.addClass('yes');
-            icon.oneTime('300ms', function(){
+            icon.oneTime('300ms', function() {
                 icon.removeClass('yes');
             })
             grid.grid("reload");
@@ -319,19 +328,29 @@ window.vtest = {
             var ref = $(this);
             var gridName = ref.attr('grid');
             var grid = vtest.grid[gridName + "Grid"];
+            var input = $('input', ref.parent().parent());
+            var countdown = $('.countdown', ref.parent().parent());
             var icon = $('i', ref);
             if(icon.hasClass('yes')) {
                 icon.removeClass("yes");
                 $('b', ref).first().html("定时刷新(关闭)");
-                ref.stopTime("refTime");
+                countdown.pause();
+                input.show();
+                countdown.hide();
             } else {
                 icon.addClass("yes");
                 $('b', ref).first().html("定时刷新(开启)");
-                var time = z.getIntAttr($('input', ref.parent().parent()), "value");
+                var time = z.getIntAttr(input, "value");
                 if(time) {
-                    ref.everyTime(time + 's', 'refTime', function() {
-                        grid.grid("reload");
-                    }, 0, true);
+                    input.hide();
+                    countdown.show();
+                    countdown.CRcountDown({
+                        startNumber: time,
+                        callBack: function() {
+                            grid.grid("reload");
+                        },
+                        redo: true
+                    });
                 }
             }
         }
