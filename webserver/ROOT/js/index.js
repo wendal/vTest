@@ -71,6 +71,9 @@ function bind() {
             event.returnValue = false;
         }
     });
+    // 查看report
+    var reportEditDiv = $('.workspace .report .right_ws', bodyJq);
+    reportEditDiv.delegate("table tbody td a", "click", vtest.events.showReportErrMsg);
 };
 
 function fontWithColor(msg, color) {
@@ -114,22 +117,46 @@ function showRobot() {
                 gridJq.grid('load', {
                     rowDatas: data
                 });
+                // 如果有数据的话，选中第一个
+                if(data.length > 0) {
+                    gridJq.grid('activeRow', 0);
+                }
             });
         },
         getId: function(rowData) {
             return rowData.id;
         },
         afterActive: function(rowData) {
-
+            showRobotDetail(rowData);
         }
     });
     robotDiv.grid(robotConf);
     vtest.grid.robotGrid = robotDiv;
+    // 右边编辑框
+    var editDiv = $('.workspace .robot .right_ws', document.body);
+    editDiv.append('<h2>没有选中信息!</h2>');
+};
+
+function showRobotDetail(rowData) {
+    var editDiv = $('.workspace .robot .right_ws', document.body);
+    editDiv.empty();
+    //
+    var rohtml = '<div class="imgs"><img src="../css/robot_128.png"></div>';
+    rohtml += '<div class="infolist">';
+    rohtml += '<table cellspacing="0" cellpadding="0" border="0"><tbody>';
+    rohtml += '<tr><td class="tkey">IPv4地址</td><td class="tvalue">' + rowData.ipv4 + '</td></tr>';
+    rohtml += '<tr><td class="tkey">机器人名称</td><td class="tvalue">' + rowData.hnm + '</td></tr>';
+    rohtml += '<tr><td class="tkey">进程号</td><td class="tvalue">' + rowData.prid + '</td></tr>';
+    rohtml += '<tr><td class="tkey">最后心跳时间</td><td class="tvalue">' + rowData.lm + '</td></tr>';
+    rohtml += '</tbody></table>';
+    rohtml += '</div>';
+    editDiv.append(rohtml);
 };
 
 function showTask() {
     var taskDiv = $('.workspace .task .list', document.body);
     var taskConf = $.extend(true, {}, vtest.baseConf, {
+        hideCols: true,
         columns: [{
             name: "id",
             text: "主键",
@@ -159,21 +186,33 @@ function showTask() {
         }, {
             name: "ct",
             text: "创建时间",
-            show: true
+            show: true,
+            width: 145
         }, {
             name: "lm",
             text: "最后更新",
-            show: true
+            show: true,
+            width: 145
         }, {
             name: "done",
-            text: "完成次数",
+            text: "完成",
             show: true,
-            width: 100
+            width: 50
+        }, {
+            name: "nok",
+            text: "成功",
+            show: true,
+            width: 50
+        }, {
+            name: "nfail",
+            text: "失败",
+            show: true,
+            width: 50
         }, {
             name: "fnn",
-            text: "完成次数",
+            text: "状态",
             show: true,
-            width: 100,
+            width: 80,
             cellHtml: function(rowData) {
                 // 表示 done>= 多少后，这个任务算完成
                 var re = rowData[this.name];
@@ -184,16 +223,6 @@ function showTask() {
                     return "任务未完成";
                 }
             }
-        }, {
-            name: "nok",
-            text: "成功次数",
-            show: true,
-            width: 100
-        }, {
-            name: "nfail",
-            text: "失败次数",
-            show: true,
-            width: 100
         }],
         getData: function() {
             var gridJq = this;
@@ -201,6 +230,10 @@ function showTask() {
                 gridJq.grid('load', {
                     rowDatas: data
                 });
+                // 如果有数据的话，选中第一个
+                if(data.length > 0) {
+                    gridJq.grid('activeRow', 0);
+                }
             });
         },
         getId: function(rowData) {
@@ -212,6 +245,9 @@ function showTask() {
     });
     taskDiv.grid(taskConf);
     vtest.grid.taskGrid = taskDiv;
+    // 右边编辑框
+    var editDiv = $('.workspace .task .right_ws', document.body);
+    editDiv.append('<h2>没有选中信息!</h2>');
 };
 
 function showReport() {
@@ -233,11 +269,13 @@ function showReport() {
         }, {
             name: "lm",
             text: "最后更新",
-            show: true
+            show: true,
+            width: 145
         }, {
             name: "err",
             text: "运行结果",
             show: true,
+            width: 80,
             cellHtml: function(rowData) {
                 // 结果类型 0 表示成功，1 表示任务失败, 2 表示内部错误
                 var re = rowData[this.name];
@@ -280,17 +318,55 @@ function showReport() {
                 gridJq.grid('load', {
                     rowDatas: data
                 });
+                // 如果有数据的话，选中第一个
+                if(data.length > 0) {
+                    gridJq.grid('activeRow', 0);
+                }
             });
         },
         getId: function(rowData) {
             return rowData.id;
         },
         afterActive: function(rowData) {
-
+            showReportDetail(rowData);
         }
     });
     reportDiv.grid(reportConf);
     vtest.grid.reportGrid = reportDiv;
+    // 右边编辑框
+    var editDiv = $('.workspace .report .right_ws', document.body);
+    editDiv.append('<h2>没有选中信息!</h2>');
+};
+
+function showReportDetail(rowData) {
+    var editDiv = $('.workspace .report .right_ws', document.body);
+    editDiv.empty();
+    //
+    var rohtml = '<div class="imgs"><img src="../css/report_128.png"></div>';
+    rohtml += '<div class="infolist">';
+    rohtml += '<table cellspacing="0" cellpadding="0" border="0">';
+    rohtml += '<thead><tr><td>步骤</td><td>耗时</td><td>结果</td><td>错误</td></tr></thead>';
+    rohtml += '<tbody>';
+    var duras = rowData.dura.split(",");
+    var step = rowData.step;
+    //字符分割
+    for( i = 0, j = 1; i < duras.length; i++, j++) {
+        rohtml += '<tr><td class="tkey">第 ' + fontWithColor(j + '', 'red') + ' 步</td>';
+        rohtml += '<td class="tvalue">' + fontWithColor(duras[i] + '', '#A53688') + '毫秒</td>';
+        if(step != 0 && step == j) {
+            rohtml += '<td class="tvalue">' + fontWithColor('失败', 'red') + '</td>';
+            rohtml += '<td class="tvalue"><a>查看</a></td>';
+        }else{
+            rohtml += '<td class="tvalue">成功</td>';
+            rohtml += '<td class="tvalue"></td>';
+        }
+        rohtml += '</tr>';
+    }
+    rohtml += '</tbody></table>';
+    rohtml += '</div>';
+    editDiv.append(rohtml);
+    // 数据绑定
+    vtest.reportErrMsg = rowData.msg;
 };
 
 window.vtest = {
@@ -353,6 +429,9 @@ window.vtest = {
                     });
                 }
             }
+        },
+        showReportErrMsg : function(){
+            alert(vtest.reportErrMsg);
         }
     },
     baseConf: {
@@ -373,7 +452,8 @@ window.vtest = {
         robotGrid: null,
         taskGrid: null,
         reportGrid: null
-    }
+    },
+    reportErrMsg : null
 };
 
 $(document).ready(function() {

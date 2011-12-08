@@ -48,7 +48,7 @@ body {
     white-space: normal;
 }
 
-.innerworkspace h3 {
+.innerworkspace h3.title {
     background-color: rgba(0, 0, 255, 0.4);
     border-radius: 8px 8px 0 0;
     color: #FFFFFF;
@@ -63,15 +63,6 @@ body {
     vertical-align: top;
 }
 
-.innerworkspace .right_ws {
-    background-color: rgba(255, 255, 255, 0.6);
-    float: left;
-    display: block;
-    overflow: hidden;
-    vertical-align: top;
-    width: 300px;
-}
-
 .left_ws .list {
     width: 100%;
     overflow: hidden;
@@ -84,6 +75,78 @@ body {
     background: -webkit-gradient(linear, 0 0, 0 100%, from(#FFF), to(#FFF), color-stop(.5,#EEE), color-stop(.75,#DDD));
     background: -moz-linear-gradient(top, #FFF, #EEE 50%, #DDD 75%, #FFF);
     border-bottom: 1px solid #BBBBBB;
+}
+
+.innerworkspace .right_ws {
+    float: left;
+    overflow: hidden;
+    vertical-align: top;
+    width: 400px;
+    position: relative;
+    padding: 3px 5px;
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.right_ws {
+}
+
+.right_ws .imgs {
+    margin: 2px auto;
+    height: 128px;
+    width: 128px;
+}
+
+.right_ws .infolist {
+    overflow: hidden;
+    vertical-align: top;
+    width: 100%;
+}
+
+.infoline {
+    float: left;
+    display: block;
+}
+
+table {
+    margin: 0 auto;
+}
+
+thead tr td {
+    color: grey;
+}
+
+table td {
+    padding: 8px;
+    word-wrap: break-word;
+    font-weight: bold;
+    font-size: larger;
+}
+
+td a {
+    cursor: pointer;
+}
+
+table td.tkey {
+    color: #FFFF44;
+    text-align: right;
+    text-shadow: 1px 1px 0 #000000;
+}
+
+table td.tvalue {
+    color: #FFFFFF;
+    font-family: Courier;
+    text-shadow: 1px 1px 1px #666666;
+}
+
+.right_ws .infoline {
+}
+
+.right_ws h2 {
+    text-align: center;
+    margin: 20px auto;
+    color: #FFFFFF;
+    opacity: 0.8;
 }
 
 .robot {

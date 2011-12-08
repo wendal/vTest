@@ -90,7 +90,7 @@ public class TestDataMaker {
 		Report report = new Report();
 		report.setErr(random.nextInt(2));
 		report.setLm(VTests.now());
-		report.setMsg("OK");
+		report.setMsg("各种错误信息哈哈哈啊哈哈哈哈哈哈哈哈");
 		report.setRid(random.nextInt(100));
 		report.setStep(random.nextInt(5));
 		report.setTid(random.nextInt(100));

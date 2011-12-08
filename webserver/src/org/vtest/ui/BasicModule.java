@@ -38,7 +38,7 @@ public abstract class BasicModule<T> {
 		if (!isInitialized) {
 			setClass();
 			if (isInitialized && null == clz) {
-				throw Lang.makeThrow("[%s]的实体类或者服务类型没有设置成功。", getClass());
+				throw Lang.makeThrow("Can't set the class [%s]", getClass());
 			}
 		}
 	}

@@ -13,7 +13,7 @@ import org.vtest.model.Task;
 @InjectName
 @IocBean
 @At("/td")
-public class TestDataModule extends BasicModule {
+public class TestDataModule extends BasicModule<Object> {
 
 	@Override
 	public Object list() {
