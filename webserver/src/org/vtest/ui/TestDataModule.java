@@ -26,7 +26,7 @@ public class TestDataModule extends BasicModule<Object> {
 	}
 
 	@Override
-	public Object clear(int[] ids) {
+	public Object clear(Integer[] ids) {
 		return null;
 	}
 

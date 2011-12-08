@@ -12,8 +12,7 @@ body {
 }
 
 .vhead {
-    padding-top: 2px;
-    line-height: 24px;
+    padding-top: 5px;
     line-height: 30px;
     white-space: nowrap;
     width: 100%;
@@ -46,6 +45,7 @@ body {
     height: 100%;
     overflow: hidden;
     white-space: normal;
+    position: relative;
 }
 
 .innerworkspace h3.title {
@@ -191,8 +191,6 @@ ul li a {
 
 ul li div {
     height: 20px;
-    margin-top: 3px;
-    margin-left: 5px;
     cursor: pointer;
     display: block;
     padding-left: 6px;
@@ -214,6 +212,21 @@ a.ci.active {
 
 a:link {
     text-decoration: none;
+}
+
+.ref {
+    margin-top: 3px;
+    margin-left: 5px;
+}
+
+.ref_time {
+    margin-top: 3px;
+    margin-left: 5px;
+}
+
+.ref_time_num {
+    margin-top: 3px;
+    margin-left: 5px;
 }
 
 .masker {
@@ -250,12 +263,12 @@ a:link {
     margin: 20px auto;
     padding: 2px;
     width: 150px;
-    font-size: 20px;
     line-height: 25px;
-    font-weight: bold;
     border-radius: 4px 4px 4px 4px;
     background-color: rgba(10,10,10, 0.5);
     color: #aaaaaa;
+    font-weight: bold;
+    font-size: 20px;
     text-shadow: 1px 1px 0 #888888;
     height: 30px;
 }
@@ -263,7 +276,7 @@ a:link {
 .mk_txt {
     background-color: rgba(0, 0, 0, 0.6);
     border: 0 none;
-    border-radius: 8px 8px 8px 8px;
+    border-radius: 8 pxs;
     color: #EEEE00;
     font-family: Courier;
     font-size: 12px;
@@ -273,6 +286,72 @@ a:link {
     width: 100%;
     height: 70%;
     display: block;
+}
+
+.mk_line {
+    text-align: left;
+    height: 32px;
+    width: 330px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 0 none;
+    border-radius: 4px;
+    font-size: 15px;
+    line-height: 24px;
+    margin-left: 0;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-top: 4px;
+}
+
+.mk_line span {
+    color: #DDDDDD;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #888888;
+    margin-right: 20px;
+}
+
+.mk_line input {
+    border: 0 none;
+    border-radius: 4px 4px 4px 4px;
+    font-size: 14px;
+    color: #888888;
+    font-style: italic;
+}
+
+.mk_line.fortxt {
+    margin-bottom: 0;
+    width: 100px;
+}
+
+.mk_txt.taskdetail {
+    margin-top: 0;
+    height: 50%;
+}
+
+.mk_botton {
+    margin: 10px auto;
+    height: 30px;
+    width: 300px;
+    list-style: none outside none;
+    text-align: center;
+}
+
+.mk_botton.toClose{
+    width: 100px;
+}
+
+.mk_botton li {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px 8px 8px 8px;
+    color: #CCCCCC;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    margin: 8px;
+    padding: 6px 16px;
+    vertical-align: middle;
 }
 
 .task_bottons {
@@ -285,4 +364,22 @@ a:link {
     cursor: pointer;
     font-size: 12px;
     margin: 0 16px;
+}
+
+.titlebar {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+    height: 26px;
+    width: 200px;
+    line-height: 24px;
+    white-space: nowrap;
+}
+
+.titlebar ul li {
+    float: right;
+}
+
+.titlebar ul li b {
+    color: #FFFFFF;
 }

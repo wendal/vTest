@@ -73,7 +73,7 @@ public abstract class BasicModule<T> {
 	}
 
 	@At
-	public Object clear(@Param("ids") int[] ids) {
+	public Object clear(@Param("ids") Integer[] ids) {
 		dao.clear(getClz(), Cnd.where("id", "in", ids));
 		return VTests.MSG_OK;
 	}

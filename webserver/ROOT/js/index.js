@@ -81,6 +81,13 @@ function bind() {
     taskEditDiv.delegate(".task_detail", "click", vtest.events.showTaskDetail);
     // 关闭masker
     bodyJq.delegate("#close", "click", vtest.events.closeMasker);
+    // 批量删除
+    var titlebar = $('.workspace .titlebar', bodyJq);
+    titlebar.delegate(".del", 'click', vtest.events.delItem);
+    titlebar.delegate(".add", 'click', vtest.events.addItem);
+    // addTask
+    bodyJq.delegate(".toClose", "click", vtest.events.closeMasker);
+    bodyJq.delegate(".saveTask", "click", vtest.events.addTask);
 };
 
 function fontWithColor(msg, color) {
@@ -227,7 +234,7 @@ function showTask() {
                 if(done >= re) {
                     return fontWithColor('任务完成', 'green');
                 } else {
-                    return "任务未完成";
+                    return "未完成";
                 }
             }
         }],
@@ -513,6 +520,7 @@ window.vtest = {
             masker();
             // masker中加入内容
             var html = '<div class="mk_title">错误信息</div><textarea class="mk_txt"></textarea>';
+            html += '<ul class="mk_botton toClose"><li class="toClose"><b>关闭</b></li></ul>';
             $('.masker .fg', document.body).append(html);
             $('.masker .fg .mk_txt', document.body).val(vtest.reportErrMsg);
         },
@@ -520,11 +528,98 @@ window.vtest = {
             masker();
             // masker中加入内容
             var html = '<div class="mk_title">详细配置</div><textarea class="mk_txt"></textarea>';
+            html += '<ul class="mk_botton toClose"><li class="toClose"><b>关闭</b></li></ul>';
             $('.masker .fg', document.body).append(html);
             $('.masker .fg .mk_txt', document.body).val(vtest.taskDetail);
+
         },
         closeMasker: function() {
             delMasker();
+        },
+        delItem: function() {
+            var botton = $(this);
+            var gridname = botton.attr("grid");
+            var grid = vtest.grid[gridname + "Grid"];
+            var rowDatas = grid.grid("getCheckedRowData");
+            if(rowDatas) {
+                var yes = confirm("亲，确定真的要删除这已选中的 " + rowDatas.length + " 行吗？");
+                if(yes) {
+                    var delIds = [];
+                    $.each(rowDatas, function(index, rowData) {
+                        delIds.push(rowData.id);
+                    });
+                    $.ajax({
+                        url: gridname + '/clear',
+                        dataType: 'json',
+                        data: {
+                            ids: delIds
+                        },
+                        success: function(data) {
+                            // 右边编辑框
+                            var editDiv = $('.workspace .report .right_ws', document.body);
+                            editDiv.empty();
+                            editDiv.append('<h2>没有选中信息!</h2>');
+                            // reload
+                            grid.grid("reload");
+                        }
+                    });
+                }
+            } else {
+                alert("亲，请选择几个东东让偶来删除哟");
+            }
+        },
+        addItem: function() {
+            masker();
+            // masker中加入内容
+            var html = '<div class="mk_title">任务信息</div>';
+            html += '<div class="mk_line "><span>任务名称</span><input class="taskname" type="text" size="20"/></div>';
+            html += '<div class="mk_line "><span>执行次数</span><input class="taskfnn" type="text" size="20"/></div>';
+            html += '<div class="mk_line fortxt"><span>详细配置</span></div>';
+            html += '<textarea class="mk_txt taskdetail"></textarea>';
+            html += '<ul class="mk_botton task"><li class="saveTask"><b>保存一个新任务</b></li><li class="toClose"><b>取消操作</b></li></ul>';
+            $('.masker .fg', document.body).append(html);
+            $('.masker .fg .mk_txt', document.body).val('{\n\n}');
+            $('.masker .taskfnn', document.body).toggleInput("请输入一个整数");
+            $(".masker .taskname", document.body).toggleInput("请输入任务名称").focus();
+        },
+        addTask: function() {
+            // 检测并获取数据
+            var tnm = $('.masker .mk_line .taskname', document.body);
+            var tfnn = $('.masker .mk_line .taskfnn', document.body);
+            var tde = $('.masker .taskdetail', document.body);
+            var taskname = tnm.val();
+            var taskfnn = tfnn.val();
+            var taskdetail = tde.val();
+            if(taskname == "请输入任务名称") {
+                alert("任务名称,请输入一个合适的名称.");
+                tnm.focus();
+                return false;
+            }
+            if(taskfnn.search("^-?\\d+$") != 0) {
+                alert("执行次数,请输入一个整数.");
+                tfnn.val("").focus();
+                return false;
+            }
+            if($.trim(taskdetail).length == 0) {
+                alert("详细配置不能为空.");
+                tde.val("{\n\n}").focus();
+                return false;
+            }
+            $.getJSON("task/insert", {
+                name: taskname,
+                fnn: parseInt(taskfnn),
+                detail: taskdetail
+            }, function(re) {
+                alert("保存成功");
+                // 右边编辑框
+                var editDiv = $('.workspace .task .right_ws', document.body);
+                editDiv.empty();
+                editDiv.append('<h2>没有选中信息!</h2>');
+                // reload
+                vtest.grid.taskGrid.grid("reload");
+                // 关闭masker
+                delMasker();
+            });
         }
     },
     baseConf: {
