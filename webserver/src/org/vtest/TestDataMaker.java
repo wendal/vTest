@@ -1,12 +1,14 @@
 package org.vtest;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Random;
 
 import org.nutz.dao.Dao;
+import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Streams;
 import org.nutz.lang.random.StringGenerator;
 import org.vtest.model.Report;
 import org.vtest.model.Robot;
@@ -22,18 +24,9 @@ public class TestDataMaker {
 	private static StringGenerator stringGenerator = new StringGenerator(10);
 
 	static {
-		String str;
-		StringBuilder sb = new StringBuilder();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(TaskModule.class.getResourceAsStream("/testdata/taskDemo.js")));
-		try {
-			while ((str = reader.readLine()) != null) {
-				sb.append(str).append("\n");
-			}
-			detail = sb.toString();
-		}
-		catch (IOException e) {
-			throw Lang.wrapThrow(e);
-		}
+		BufferedReader reader = new BufferedReader(new InputStreamReader(TaskModule.class.getResourceAsStream("/testdata/base.json")));
+		detail = Json.toJson(Json.fromJson(Streams.readAndClose(reader)), JsonFormat.full());
+		//System.out.println("---->>>>>>>>>>>>>>>>>>\n"+detail);
 	}
 
 	public static void makeTestData(int num, Dao dao, Class<?>[] clzs) {
