@@ -295,7 +295,7 @@ function showTaskDetail(rowData) {
     // 导出对应Report按钮
     rohtml += '<div class="task_bottons"><a class="task_detail">查看详细配置</a>';
     // if(finish)
-        rohtml += '<a target="_blank" href="task/showResult?id=' + rowData.id + '">查看完整结果</a>';
+        rohtml += '<a target="_blank" href="task/showResult?id=' + rowData.id + '">导出运行报告</a>';
     rohtml += '</div>';
     editDiv.append(rohtml);
     // 记录detail
