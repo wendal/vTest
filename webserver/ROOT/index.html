@@ -10,6 +10,8 @@
         <link rel="stylesheet" type="text/css" href="css/index.css"/>
         <script language="JavaScript" src="js/jquery-1.6.2.min.js"></script>
         <script language="JavaScript" src="js/jquery.timers.js"></script>
+        <script language="JavaScript" src="js/jquery.countdown.js"></script>
+        <script language="JavaScript" src="js/jquery.ele.toggleInput.js"></script>
         <script language="JavaScript" src="js/jquery.ele.boxing.js"></script>
         <script language="JavaScript" src="js/z.js"></script>
         <script language="JavaScript" src="js/jquery.grid.js"></script>
@@ -41,7 +43,7 @@
         <div class="vbody vdiv">
             <div class="workspace">
                 <div class="innerworkspace robot">
-                    <h3>注册信息</h3>
+                    <h3 class="title">注册信息</h3>
                     <div class="left_ws">
                         <div class="list"></div>
                         <div class="bottons">
@@ -60,7 +62,8 @@
                                 </li>
                                 <li>
                                     <div class="ref_time_num" grid="robot">
-                                        <input type="number" value="60" size="2" align="right"/>
+                                        <input class="number" type="text" value="60" size="2" align="right"/>
+                                        <b class="countdown" style="display: none"></b>
                                         <b>秒</b>
                                     </div>
                                 </li>
@@ -68,11 +71,21 @@
                         </div>
                     </div>
                     <div class="right_ws"></div>
+                    <div class="titlebar">
+                        <ul>
+                            <li>
+                                <div class="button del" grid="robot">
+                                    <i class="icon del"></i>
+                                    <b>批量删除</b>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div> 
             </div>
             <div class="workspace">
                 <div class="innerworkspace task">
-                    <h3>任务信息</h3>
+                    <h3 class="title">任务信息</h3>
                     <div class="left_ws">
                         <div class="list"></div>
                         <div class="bottons">
@@ -91,7 +104,8 @@
                                 </li>
                                 <li>
                                     <div class="ref_time_num" grid="task">
-                                        <input type="number" value="60" size="2" align="right"/>
+                                        <input class="number" type="text" value="60" size="2" align="right"/>
+                                        <b class="countdown" style="display: none"></b>
                                         <b>秒</b>
                                     </div>
                                 </li>
@@ -99,11 +113,27 @@
                         </div>
                     </div>
                     <div class="right_ws"></div>
+                    <div class="titlebar">
+                        <ul>
+                            <li>
+                                <div class="button del" grid="task">
+                                    <i class="icon del"></i>
+                                    <b>批量删除</b>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="button add" grid="task">
+                                    <i class="icon add"></i>
+                                    <b>添加新任务</b>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div> 
             </div>
             <div class="workspace">
                 <div class="innerworkspace report">
-                    <h3>运行报告</h3>
+                    <h3 class="title">运行报告</h3>
                     <div class="left_ws">
                         <div class="list"></div>
                         <div class="bottons">
@@ -122,7 +152,8 @@
                                 </li>
                                 <li>
                                     <div class="ref_time_num" grid="report">
-                                        <input type="number" value="60" size="2" align="right"/>
+                                        <input class="number" type="text" value="60" size="2" align="right"/>
+                                        <b class="countdown" style="display: none"></b>
                                         <b>秒</b>
                                     </div>
                                 </li>
@@ -130,6 +161,16 @@
                         </div>
                     </div>
                     <div class="right_ws"></div>
+                    <div class="titlebar">
+                        <ul>
+                            <li>
+                                <div class="button del" grid="report">
+                                    <i class="icon del"></i>
+                                    <b>批量删除</b>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div> 
             </div>
         </div>

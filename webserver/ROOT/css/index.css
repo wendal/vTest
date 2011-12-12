@@ -12,8 +12,7 @@ body {
 }
 
 .vhead {
-    padding-top: 2px;
-    line-height: 24px;
+    padding-top: 5px;
     line-height: 30px;
     white-space: nowrap;
     width: 100%;
@@ -46,9 +45,10 @@ body {
     height: 100%;
     overflow: hidden;
     white-space: normal;
+    position: relative;
 }
 
-.innerworkspace h3 {
+.innerworkspace h3.title {
     background-color: rgba(0, 0, 255, 0.4);
     border-radius: 8px 8px 0 0;
     color: #FFFFFF;
@@ -63,15 +63,6 @@ body {
     vertical-align: top;
 }
 
-.innerworkspace .right_ws {
-    background-color: rgba(255, 255, 255, 0.6);
-    float: left;
-    display: block;
-    overflow: hidden;
-    vertical-align: top;
-    width: 300px;
-}
-
 .left_ws .list {
     width: 100%;
     overflow: hidden;
@@ -84,6 +75,78 @@ body {
     background: -webkit-gradient(linear, 0 0, 0 100%, from(#FFF), to(#FFF), color-stop(.5,#EEE), color-stop(.75,#DDD));
     background: -moz-linear-gradient(top, #FFF, #EEE 50%, #DDD 75%, #FFF);
     border-bottom: 1px solid #BBBBBB;
+}
+
+.innerworkspace .right_ws {
+    float: left;
+    overflow: hidden;
+    vertical-align: top;
+    width: 400px;
+    position: relative;
+    padding: 3px 5px;
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.right_ws {
+}
+
+.right_ws .imgs {
+    margin: 2px auto;
+    height: 128px;
+    width: 128px;
+}
+
+.right_ws .infolist {
+    overflow: hidden;
+    vertical-align: top;
+    width: 100%;
+}
+
+.infoline {
+    float: left;
+    display: block;
+}
+
+table {
+    margin: 0 auto;
+}
+
+thead tr td {
+    color: grey;
+}
+
+table td {
+    padding: 8px;
+    word-wrap: break-word;
+    font-weight: bold;
+    font-size: larger;
+}
+
+td a {
+    cursor: pointer;
+}
+
+table td.tkey {
+    color: #FFFF44;
+    text-align: right;
+    text-shadow: 1px 1px 0 #000000;
+}
+
+table td.tvalue {
+    color: #FFFFFF;
+    font-family: Courier;
+    text-shadow: 1px 1px 1px #666666;
+}
+
+.right_ws .infoline {
+}
+
+.right_ws h2 {
+    text-align: center;
+    margin: 20px auto;
+    color: #FFFFFF;
+    opacity: 0.8;
 }
 
 .robot {
@@ -128,8 +191,6 @@ ul li a {
 
 ul li div {
     height: 20px;
-    margin-top: 3px;
-    margin-left: 5px;
     cursor: pointer;
     display: block;
     padding-left: 6px;
@@ -151,4 +212,174 @@ a.ci.active {
 
 a:link {
     text-decoration: none;
+}
+
+.ref {
+    margin-top: 3px;
+    margin-left: 5px;
+}
+
+.ref_time {
+    margin-top: 3px;
+    margin-left: 5px;
+}
+
+.ref_time_num {
+    margin-top: 3px;
+    margin-left: 5px;
+}
+
+.masker {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.masker .bg {
+    background: none repeat scroll 0 0 #000000;
+    opacity: 0.6;
+}
+
+.fg {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 32px;
+}
+
+.close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: url("icons.png") no-repeat scroll -160px -128px transparent;
+    height: 32px;
+    width: 32px;
+}
+
+.mk_title {
+    text-align: center;
+    margin: 20px auto;
+    padding: 2px;
+    width: 150px;
+    line-height: 25px;
+    border-radius: 4px 4px 4px 4px;
+    background-color: rgba(10,10,10, 0.5);
+    color: #aaaaaa;
+    font-weight: bold;
+    font-size: 20px;
+    text-shadow: 1px 1px 0 #888888;
+    height: 30px;
+}
+
+.mk_txt {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 0 none;
+    border-radius: 8 pxs;
+    color: #EEEE00;
+    font-family: Courier;
+    font-size: 12px;
+    line-height: 20px;
+    padding: 10px;
+    margin: 20px auto;
+    width: 100%;
+    height: 70%;
+    display: block;
+}
+
+.mk_line {
+    text-align: left;
+    height: 32px;
+    width: 330px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 0 none;
+    border-radius: 4px;
+    font-size: 15px;
+    line-height: 24px;
+    margin-left: 0;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-top: 4px;
+}
+
+.mk_line span {
+    color: #DDDDDD;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #888888;
+    margin-right: 20px;
+}
+
+.mk_line input {
+    border: 0 none;
+    border-radius: 4px 4px 4px 4px;
+    font-size: 14px;
+    color: #888888;
+    font-style: italic;
+}
+
+.mk_line.fortxt {
+    margin-bottom: 0;
+    width: 100px;
+}
+
+.mk_txt.taskdetail {
+    margin-top: 0;
+    height: 50%;
+}
+
+.mk_botton {
+    margin: 10px auto;
+    height: 30px;
+    width: 300px;
+    list-style: none outside none;
+    text-align: center;
+}
+
+.mk_botton.toClose{
+    width: 100px;
+}
+
+.mk_botton li {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px 8px 8px 8px;
+    color: #CCCCCC;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    margin: 8px;
+    padding: 6px 16px;
+    vertical-align: middle;
+}
+
+.task_bottons {
+    padding: 8px;
+    text-align: center;
+}
+
+.task_bottons a {
+    color: #FFAA00;
+    cursor: pointer;
+    font-size: 12px;
+    margin: 0 16px;
+}
+
+.titlebar {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+    height: 26px;
+    width: 200px;
+    line-height: 24px;
+    white-space: nowrap;
+}
+
+.titlebar ul li {
+    float: right;
+}
+
+.titlebar ul li b {
+    color: #FFFFFF;
 }

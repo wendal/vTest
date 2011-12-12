@@ -1142,7 +1142,7 @@ var commands = {
         if(rows) {
             var checkedDatas = [];
             $.each(rows, function(index, row) {
-                checkedDatas.push(row.data(ROW_DATA));
+                checkedDatas.push($(row).data(ROW_DATA));
             });
             return checkedDatas;
         }

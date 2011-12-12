@@ -13,6 +13,14 @@
     background: url("icons.png") no-repeat scroll 0 -32px transparent;
 }
 
+.icon.del {
+    background: url("icons.png") no-repeat scroll -16px 0 transparent;
+}
+
+.icon.add {
+    background: url("icons.png") no-repeat scroll 0 0 transparent;
+}
+
 .icon.active {
     background: url("icons.png") no-repeat scroll 0 -32px transparent;
     -moz-transform: rotate(90deg);
@@ -22,11 +30,11 @@
     transform: rotate(90deg);
 }
 
-.icon.refresh{
+.icon.refresh {
     background: url("icons.png") no-repeat scroll -128px -144px transparent;
 }
 
-.icon.refresh.yes{
+.icon.refresh.yes {
     background: url("icons.png") no-repeat scroll -128px -144px transparent;
     -moz-transform: rotate(360deg);
     -webkit-transform: rotate(360deg);
@@ -35,10 +43,10 @@
     transform: rotate(360deg);
 }
 
-.icon.refresh_time{
+.icon.refresh_time {
     background: url("icons.png") no-repeat scroll -112px -144px transparent;
 }
 
-.icon.refresh_time.yes{
+.icon.refresh_time.yes {
     background: url("icons.png") no-repeat scroll -96px -144px transparent;
 }
