@@ -54,11 +54,11 @@ public class TaskModule extends BasicModule<Task> {
 		html.append("<table class=\"task\" width=\"300px\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">");
 		html.append("<tr>");
 		html.append("<td>任务ID</td>");
-		html.append("<td>").append(task.getId()).append("</td>");
+		html.append("<td id=\"task_id\">").append(task.getId()).append("</td>");
 		html.append("</tr>");
 		html.append("<tr>");
 		html.append("<td>任务名称</td>");
-		html.append("<td>").append(task.getName()).append("</td>");
+		html.append("<td id=\"task_name\">").append(task.getName()).append("</td>");
 		html.append("</tr>");
 		html.append("<tr>");
 		html.append("<td>任务状态</td>");

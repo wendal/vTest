@@ -55,5 +55,12 @@
     <body>
         <%=request.getAttribute("obj")%>
     </body>
-    <script></script>
+    <script>
+        window.onload = function() {
+            var task_id = document.getElementById("task_id").innerHTML;
+            var task_name = document.getElementById("task_name").innerHTML;
+            var titleMsg = "任务:" + task_name + "(ID:" + task_id + ")运行报告";
+            document.title = titleMsg;
+        };
+    </script>
 </html>
