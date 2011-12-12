@@ -105,7 +105,7 @@ function showRobot() {
     var robotConf = $.extend(true, {}, vtest.baseConf, {
         columns: [{
             name: "id",
-            text: "主键",
+            text: "ID",
             show: true,
             width: 50
         }, {
@@ -173,7 +173,7 @@ function showTask() {
         hideCols: true,
         columns: [{
             name: "id",
-            text: "主键",
+            text: "ID",
             show: true,
             width: 50
         }, {
@@ -307,7 +307,7 @@ function showReport() {
     var reportConf = $.extend(true, {}, vtest.baseConf, {
         columns: [{
             name: "id",
-            text: "主键",
+            text: "ID",
             show: false,
             width: 100
         }, {
