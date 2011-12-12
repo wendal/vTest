@@ -27,10 +27,10 @@ public class VTestSetup implements Setup {
 		}
 		// 测试数据
 		VTestConfig vc = new VTestConfig(ioc);
-//		if (vc.getUseTestMode()) {
+		if (vc.getUseTestMode()) {
 			log.info("Add TestData to Database");
 			TestDataMaker.makeTestData(vc.getTestMax(), dao, clzs);
-//		}
+		}
 	}
 
 	@Override

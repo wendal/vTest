@@ -106,8 +106,8 @@ function showRobot() {
         columns: [{
             name: "id",
             text: "主键",
-            show: false,
-            width: 100
+            show: true,
+            width: 50
         }, {
             name: "ipv4",
             text: "IP地址",
@@ -174,8 +174,8 @@ function showTask() {
         columns: [{
             name: "id",
             text: "主键",
-            show: false,
-            width: 100
+            show: true,
+            width: 50
         }, {
             name: "name",
             text: "任务名称",
@@ -294,8 +294,8 @@ function showTaskDetail(rowData) {
     // 查看配置按钮
     // 导出对应Report按钮
     rohtml += '<div class="task_bottons"><a class="task_detail">查看详细配置</a>';
-    if(finish)
-        rohtml += '<a target="_balnk" href="task/showResult?id=' + rowData.id + '">查看完整结果</a>';
+    // if(finish)
+        rohtml += '<a target="_blank" href="task/showResult?id=' + rowData.id + '">查看完整结果</a>';
     rohtml += '</div>';
     editDiv.append(rohtml);
     // 记录detail
@@ -552,7 +552,7 @@ window.vtest = {
                         url: gridname + '/clear',
                         dataType: 'json',
                         data: {
-                            ids: delIds
+                            ids: delIds.join(",")
                         },
                         success: function(data) {
                             // 右边编辑框
@@ -590,16 +590,25 @@ window.vtest = {
             var taskname = tnm.val();
             var taskfnn = tfnn.val();
             var taskdetail = tde.val();
+            // 任务名称
             if(taskname == "请输入任务名称") {
                 alert("任务名称,请输入一个合适的名称.");
                 tnm.focus();
                 return false;
             }
+            // 执行次数
             if(taskfnn.search("^-?\\d+$") != 0) {
-                alert("执行次数,请输入一个整数.");
+                alert("执行次数,请输入一个大于零的整数.");
                 tfnn.val("").focus();
                 return false;
             }
+            taskfnn = parseInt(taskfnn);
+            if(taskfnn < 0){
+                alert("执行次数,请输入一个大于零的整数.");
+                tfnn.val("").focus();
+                return false;
+            }
+            // 详细配置
             if($.trim(taskdetail).length == 0) {
                 alert("详细配置不能为空.");
                 tde.val("{\n\n}").focus();
@@ -607,7 +616,7 @@ window.vtest = {
             }
             $.getJSON("task/insert", {
                 name: taskname,
-                fnn: parseInt(taskfnn),
+                fnn: taskfnn,
                 detail: taskdetail
             }, function(re) {
                 alert("保存成功");

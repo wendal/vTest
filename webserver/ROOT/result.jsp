@@ -8,7 +8,17 @@
         <meta name="author" content="pangwu86" />
         <style>
             body {
-                background-color: rgba(199,237,204, 0.6);
+                
+            }
+
+            h1 {
+                text-align: center;
+            }
+
+            .ct {
+                position: absolute;
+                right: 5px;
+                margin-top: -22px;
             }
 
             .task {
@@ -18,14 +28,17 @@
                 margin: 2px;
             }
 
-            .title td {
+            .task tr td:first-child {
+                color: #3333AA;
+            }
+
+            .report_tr td {
                 color: #FFFFFF;
                 font-weight: bold;
                 line-height: 22px;
                 overflow: hidden;
                 padding-left: 2px;
                 text-align: left;
-                text-shadow: 1px 1px 2px #FFFFFF;
                 white-space: nowrap;
                 background: -moz-linear-gradient(center top , #000000, #111111 50%, #222222 75%, #000000) repeat scroll 0 0 transparent;
                 border-bottom: 1px solid #222222;
@@ -34,24 +47,13 @@
 
             .report {
             }
-
-            #detail {
-                width: 100%;
-                height: 200px;
-                margin: 2px;
+            
+            .detail {
             }
         </style>
     </head>
     <body>
         <%=request.getAttribute("obj")%>
     </body>
-    <script>
-        window.onload = function() {
-            var detail = document.getElementById("detail_hid").innerHTML;
-            var detailDiv = document.getElementById("detail");
-            detailDiv.innerText = detail;
-            detailDiv.innerHTML = detail;
-            detailDiv.value = detail;
-        };
-    </script>
+    <script></script>
 </html>
