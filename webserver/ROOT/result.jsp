@@ -8,7 +8,6 @@
         <meta name="author" content="pangwu86" />
         <style>
             body {
-                
             }
 
             h1 {
@@ -40,14 +39,15 @@
                 padding-left: 2px;
                 text-align: left;
                 white-space: nowrap;
-                background: -moz-linear-gradient(center top , #000000, #111111 50%, #222222 75%, #000000) repeat scroll 0 0 transparent;
+                background: -webkit-gradient(linear, 0 0, 0 100%, from(black), to(black), color-stop(.5,#222222), color-stop(.75,#333333));
+                background: -moz-linear-gradient(top, black, #222222 50%, #333333 75%, black);
                 border-bottom: 1px solid #222222;
                 height: 24px;
             }
 
             .report {
             }
-            
+
             .detail {
             }
         </style>
