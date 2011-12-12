@@ -75,7 +75,28 @@ def el(el_str, context):
 
 
 
-
+def init_log(name=None, file_name='test.log'):
+    import logging.handlers
+    if name :
+        log = logging.getLogger(name)
+    else :
+        log = logging.getLogger()
+    import os
+    if not os.path.exists(os.path.dirname(file_name)) :
+        os.makedirs(os.path.dirname(file_name))
+    fh = logging.handlers.RotatingFileHandler(file_name)
+    fh.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('$: %(asctime)s > %(levelname)s > %(funcName)s@%(filename)s %(lineno)s > %(message)s')
+    fh.setFormatter(formatter)
+    log.addHandler(fh)
+    
+    console = logging.StreamHandler()
+    console.setFormatter(formatter)
+    console.setLevel(logging.DEBUG)
+    log.addHandler(console)
+    
+    log.setLevel(logging.DEBUG)
+    return log
 
 
 

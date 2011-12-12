@@ -12,7 +12,7 @@ import os
 import socket
 import vtest.client.bmp as bmp
 
-log = logging.getLogger('vtest')
+log = None
 
 NEXT_NODE=0
 SUCCESS=1
@@ -23,7 +23,11 @@ LOOP_BREAK=5
 
 class BaseHandler(object):
     
-    def __init__(self, task=None):
+    def __init__(self, task=None, _log=None):
+        if not _log :
+            log = logging.getLogger('vtest')
+            from vtest.client.helper import init_log
+            init_log('vest')
         if task :
             self.webclient = WebClient(task['host'], task['port'])
         self.context = {
@@ -40,9 +44,10 @@ class BaseHandler(object):
                         }
         log.debug('Robot init context -->\n' + json.dumps(self.context, indent=2, ensure_ascii=False))
         self.task = task
+            
         
     def run(self):
-        self.control_foreach(self.task.get('steps'))
+        self.control_foreach(self.task.get('steps'), need_report=True)
         log.info('Exit code=%d' % self.last_code)
         if not self.last_code :
             return SUCCESS
@@ -103,18 +108,26 @@ class BaseHandler(object):
     #---------------------------------------------------------------------------------------------
     #控制器
 
-    def control_foreach(self, nodes):
+    def control_foreach(self, nodes, need_report=False):
+        self.nodes_report = {'times' : []}
+        i = 1 #特别定义一下
         for node_info in nodes :
             if node_info.get('node') :
                 node = self.task['nodes'][node_info['node']]
             else :
                 node = node_info
-            if self.run_node(node) :
-                if self.last_code in (SUCCESS, FAIL, ERROR) :
-                    return self.last_code
-                elif self.last_code == LOOP_BREAK :
-                    return NEXT_NODE
+            self.nodes_report['step'] = i
+            start_time = time.time()
+            try :
+                if self.run_node(node) :
+                    if self.last_code in (SUCCESS, FAIL, ERROR) :
+                        return self.last_code
+                    elif self.last_code == LOOP_BREAK :
+                        return NEXT_NODE
                 #LOOP_NEXT对foreach无意义
+            finally:
+                self.nodes_report['times'].append((time.time() - start_time ) / 100.0)
+            i += 1
         return NEXT_NODE
     
     def control_loop(self, var_index='i', start=0, end=1, delay=0, run=[]):
@@ -261,21 +274,6 @@ class BaseHandler(object):
             self.__dict__[type_name] = new.instancemethod(_method, self, None)
         elif type_method :
             exec type_method
-
-if 1 :
-    import logging.handlers
-    fh = logging.handlers.RotatingFileHandler("test.log")
-    fh.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('$: %(asctime)s > %(levelname)s > %(funcName)s@%(filename)s %(lineno)s > %(message)s')
-    fh.setFormatter(formatter)
-    log.addHandler(fh)
-    
-    console = logging.StreamHandler()
-    console.setFormatter(formatter)
-    console.setLevel(logging.DEBUG)
-    log.addHandler(console)
-    
-    log.setLevel(logging.DEBUG)
 
 
 
