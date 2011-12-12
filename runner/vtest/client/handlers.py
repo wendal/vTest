@@ -4,15 +4,15 @@ from vtest.client.helper import WebClient, renderTpl
 from vtest.client.helper import el
 import shutil
 import json
-import logging
 import new
 import time
 import uuid
 import os
 import socket
 import vtest.client.bmp as bmp
+import logging
 
-log = None
+log = logging.getLogger('handlers')
 
 NEXT_NODE=0
 SUCCESS=1
@@ -24,10 +24,6 @@ LOOP_BREAK=5
 class BaseHandler(object):
     
     def __init__(self, task=None, _log=None):
-        if not _log :
-            log = logging.getLogger('vtest')
-            from vtest.client.helper import init_log
-            init_log('vest')
         if task :
             self.webclient = WebClient(task['host'], task['port'])
         self.context = {

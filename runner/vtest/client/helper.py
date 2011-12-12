@@ -20,7 +20,7 @@ class WebClient(object):
     
     def get(self, uri, headers=None, params=None):
         conn = httplib.HTTPConnection(host=self.host,port=self.port)
-        conn.set_debuglevel(5)
+        #conn.set_debuglevel(5)
         if not headers :
             headers = {}
         if not headers.get('Cookie') :
@@ -32,7 +32,7 @@ class WebClient(object):
 
     def post(self, uri, headers=None, params=None, body=None):
         conn = httplib.HTTPConnection(host=self.host,port=self.port)
-        conn.set_debuglevel(5)
+        #conn.set_debuglevel(5)
         if not headers :
             headers = {}
         if not headers.get('Cookie') :
@@ -81,9 +81,9 @@ def init_log(name=None, file_name='test.log'):
         log = logging.getLogger(name)
     else :
         log = logging.getLogger()
-    import os
-    if not os.path.exists(os.path.dirname(file_name)) :
-        os.makedirs(os.path.dirname(file_name))
+    #import os
+    #if not os.path.exists(os.path.dirname(file_name)) :
+    #    os.makedirs(os.path.dirname(file_name))
     fh = logging.handlers.RotatingFileHandler(file_name)
     fh.setLevel(logging.DEBUG)
     formatter = logging.Formatter('$: %(asctime)s > %(levelname)s > %(funcName)s@%(filename)s %(lineno)s > %(message)s')
