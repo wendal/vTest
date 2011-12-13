@@ -24,6 +24,10 @@ class Test(unittest.TestCase):
         assert el('wendal.location[1]', context) == '深圳'
         print type(el('wendal.location', context))
         assert type(el('wendal', context)) == dict
+        
+    def test_png_create(self):
+        from vtest.client.helper import create_png
+        create_png("cc.png", 800, 400, 0, 255, 0, 255);
 
 
 if __name__ == "__main__":

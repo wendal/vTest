@@ -54,8 +54,11 @@ class WebClient(object):
             headers['Cookie'] = self.cookie
         if not headers.get('Content-Type') :
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        if isinstance(params, dict):
-            body = urllib.urlencode(params)
+        if not body and params :
+            if isinstance(params, dict):
+                body = urllib.urlencode(params)
+            else :
+                body = str(params)
         conn.request("POST", uri, body=body, headers=headers)
         return conn.getresponse()
     
@@ -132,6 +135,33 @@ def init_log(name=None, file_name='test.log'):
     log.setLevel(logging.DEBUG)
     return log
 
+def create_png(dest_file, width, height, r, g, b, a=255):
+    buf = bytearray()
+    for i in xrange(width) :
+        for j in xrange(height) :
+            buf.append(r)
+            buf.append(g)
+            buf.append(b)
+            buf.append(a)
+    png_bytes = write_png(buffer(buf), width, height)
+    if isinstance(dest_file, file):
+        dest_file.write(png_bytes)
+    else :
+        with open(dest_file, 'wb') as f :
+            f.write(png_bytes)
+
+def write_png(buf, width, height):
+    import zlib, struct
+    width_byte_4 = width * 4
+    raw_data = b"".join(b'\x00' + buf[span:span + width_byte_4] for span in range((height - 1) * width * 4, -1, - width_byte_4))
+    def png_pack(png_tag, data):
+        chunk_head = png_tag + data
+        return struct.pack("!I", len(data)) + chunk_head + struct.pack("!I", 0xFFFFFFFF & zlib.crc32(chunk_head))
+    return b"".join([
+        b'\x89PNG\r\n\x1a\n',
+        png_pack(b'IHDR', struct.pack("!2I5B", width, height, 8, 6, 0, 0, 0)),
+        png_pack(b'IDAT', zlib.compress(raw_data, 9)),
+        png_pack(b'IEND', b'')])
 
 
 

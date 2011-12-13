@@ -238,7 +238,7 @@ class BaseHandler(object):
         else :
             return FAIL
     
-    def img_make(self, file=None, width=800, height=640, bgcolor="#FF00FF"):
+    def img_make(self, file=None, width=800, height=640, bgcolor="#FF00FF", format='png'):
         file_path = self._smart(file)
         bgcolor = self._smart(bgcolor)
         file_path = os.path.abspath(file_path)
@@ -252,8 +252,12 @@ class BaseHandler(object):
             bgcolor = bmp.Color.fromLong(int(bgcolor))
         log.info("Write image into path --> " + file_path)
         with open(file_path, 'w') as f :
-            img = bmp.BitMap( width, height, bgcolor)
-            f.write(img.getBitmap())
+            if format == 'png' :
+                from vtest.client.helper import create_png
+                create_png(file_path, width, height, r=bgcolor.red, g=bgcolor.grn, b=bgcolor.blu)
+            else :
+                img = bmp.BitMap( width, height, bgcolor)
+                f.write(img.getBitmap())
         return NEXT_NODE
 
     def json_parse(self, source='', dest=None):

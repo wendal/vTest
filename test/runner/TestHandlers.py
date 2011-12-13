@@ -54,8 +54,7 @@ def abc(self, name) :
     def test_upload(self):
         with open('meta/upload_img.json') as f :
             h2 = BaseHandler(json.load(f), {'rid' : -1})
-            h2.run()
-        print "I am here"
+            assert SUCCESS == h2.run()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
