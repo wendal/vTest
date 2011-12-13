@@ -101,6 +101,9 @@ class BaseHandler(object):
             if node_type == 'control_switch' :
                 self.last_code = type_method(args)
             else :
+                _args = {}
+                for k,v in args.items() :
+                    _args[k.replace('.', '_')] = v
                 self.last_code = type_method(**args)
         except :
             log.error('Fail to execute node', exc_info=1)
