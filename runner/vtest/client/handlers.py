@@ -231,7 +231,7 @@ class BaseHandler(object):
         headers, params = self._render_headers_params(kwargs)
         file_path = self._smart(file)
         with open(file_path) as f :
-            resp = self.webclient.post(url, headers, params, body=f)
+            resp = self.webclient.post(url, headers, None, body=f)
         #log.debug('Ajax return = \n' + resp.read())
         if resp and resp.status == 200 :
             return NEXT_NODE
