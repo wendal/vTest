@@ -10,8 +10,6 @@
             "node": "user.login"
         },{
             "node": "ls.file"
-        },{
-            "type": "exit.success"
         }
     ],
     "nodes": {
