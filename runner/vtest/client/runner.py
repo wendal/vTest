@@ -22,7 +22,7 @@ def main():
                 key = line[0:line.find('=')]
                 value = line[(line.find('=') + 1):]
                 robot_conf[key] = value
-    print 'Robot conf :\n',json.dumps(robot_conf, indent=2)
+    log.info('Robot conf :\n',json.dumps(robot_conf, indent=2))
     if not robot_conf.get('tmp') :
         robot_conf['tmp'] = '/tmp/'
     db_info = {
@@ -54,7 +54,7 @@ def main():
     log.info('Robot id = %d' % robot_conf['rid'])
     
     while 1 :
-        print 'Scan new task ...'
+        log.info('Scan new task ...')
         conn = None
         try :
             conn, cur = DB.connect(db_info)
@@ -63,11 +63,13 @@ def main():
             if res :
                 record = {'id' : res[0][0], 'detail' : res[0][1]}
                 log.info('Found a task , id=%d', record['id'])
+                log.info("========================================================================")
                 cur.execute('update t_task set lm=now() where id=%d' % record['id'])
                 conn.commit()
                 conn.close()
                 start_task(record, robot_conf, db_info)
                 log.info('Task is Done, great!!')
+                log.info("========================================================================")
             else :
                 log.info('No task found ....')
         except :

@@ -43,7 +43,7 @@ class BaseHandler(object):
             
         
     def run(self):
-        self.control_foreach(self.task.get('steps'), need_report=True)
+        self.control_foreach(self.task['steps'], need_report=True)
         log.info('Exit code=%d, is OK? %s' % (self.last_code, self.last_code == SUCCESS))
         if not self.last_code :
             return SUCCESS
@@ -52,7 +52,7 @@ class BaseHandler(object):
     def _use(self, key):
         if not key :
             return {}
-        return self.context.get(key) or  {}
+        return self.context.get(key,{})
     
     def _paser(self, val):
         if isinstance(val, dict) and len(val) == 1 :
@@ -77,15 +77,19 @@ class BaseHandler(object):
     
     def _render_headers_params(self, args):
         headers = self._paser(args.get('headers'))
+        if not headers :
+            headers = self.context['task']['headers']
         if args.get('cookie') :
-            headers['Cookie'] = ';'.join(self._eval(args['cookie']))
+            headers['Cookie'] = self._render(args['cookie'])
         new_headers = {}
         for k,v in headers.items() :
             new_headers[k] = str(v)
         params = {}
         if args.get('params') :
-            for k,v in args['params'] :
-                params[k] = self._render(v)
+            for k,v in args['params'].items() :
+                params[k] = self._render(str(v))
+        log.debug('Headers -->\n' + json.dumps(headers, indent=2))
+        log.debug('Params  -->\n' + json.dumps(params, indent=2))
         return (headers, params)
     
     def run_node(self, node):
@@ -164,16 +168,23 @@ class BaseHandler(object):
     
     #---------------------------------------------------------------------------------------------
     #普通节点
-    def http_send(self, uri=None, method='GET', reps_header=None, reps_body=None, **kwargs):
+    def http_send(self, url=None, method='GET', reps_header=None, reps_body=None, **kwargs):
         headers, params = self._render_headers_params(kwargs)
-        resp = self.webclient.send(method, uri, 
+        resp = self.webclient.send(method, url, 
                             headers=headers, 
                             data=params)
-        if not resp or resp.status >= 303 :
-            log.debug('Resp is None or resp.status > 303' + str(resp))
+        if not resp :
+            log.error('Resp is NULL!!')
+            return FAIL
+        log.debug('Resp code=%d, body=\n%s' % (resp.status, resp.read()))
+        if resp.status >= 303 :
+            log.error('Resp is None or resp.status > 303 !!')
             return FAIL
         if reps_header :
-            self.context[reps_header] = resp.getheaders()
+            hs = {}
+            for header in resp.getheaders() :
+                hs[header[0]] = header[1]
+            self.context[reps_header] = hs
         if reps_body :
             if reps_body.startswith('context') :
                 context_key = reps_body[len('context:'):]
@@ -185,11 +196,11 @@ class BaseHandler(object):
                     shutil.copyfileobj(resp, f)
         return NEXT_NODE
                         
-    def ajax_upload(self, uri=None, method='POST', file=None, **kwargs):
+    def ajax_upload(self, url=None, method='POST', file=None, **kwargs):
         headers, params = self._render_headers_params(kwargs)
         file_path = self._render(file)
         with open(file_path) as f :
-            resp = self.webclient.post(uri, headers, params, body=f)
+            resp = self.webclient.post(url, headers, params, body=f)
         if resp and resp.status == 200 :
             return NEXT_NODE
         else :
@@ -249,10 +260,10 @@ class BaseHandler(object):
     def set(self, name=None, value=None, remove=None):
         if remove :
             value = None
-        self.context[name] = value
+        _value = value
+        from vtest.client.helper import to_python_el
+        exec "ctx"+ to_python_el(name) + ' = _value'
         return NEXT_NODE
-    
-
     
     def random(self, name=None, tp='int', min=0, max=1, values=None):
         import random as r
