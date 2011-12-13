@@ -11,6 +11,8 @@ import json
 
 with open('meta/base.json') as f :
     h = BaseHandler(json.load(f), {'rid' : -1})
+    from vtest.client.helper import init_log
+    init_log()
 
 class Test(unittest.TestCase):
 
@@ -18,7 +20,7 @@ class Test(unittest.TestCase):
         img_path = '_img_make.bmp'
         if os.path.exists(img_path):
             os.remove(img_path)
-        h.img_make(img_path, 800, 480, 0, 255, 90)
+        h.img_make(img_path, 800, 480, "#FF0033")
         assert os.path.exists(img_path)
         assert os.path.getsize(img_path) > 1024
     
@@ -48,6 +50,12 @@ def abc(self, name) :
         assert h.context['wendal_str']
         assert len(h.context['wendal_str']) >= 1
         assert len(h.context['wendal_str']) <= 30
+        
+    def test_upload(self):
+        with open('meta/upload_img.json') as f :
+            h2 = BaseHandler(json.load(f), {'rid' : -1})
+            h2.run()
+        print "I am here"
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

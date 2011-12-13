@@ -55,9 +55,14 @@ class BaseHandler(object):
         return self.context.get(key,{})
     
     def _paser(self, val):
-        if isinstance(val, dict) and len(val) == 1 :
+        if isinstance(val, dict) :
+            _val = dict(val.items())
             if val.get('$use') :
-                return self._eval(val['$use'])
+                _val.pop("$use")
+                _v = self._eval(val['$use'])
+                _val = dict(_val.items() + _v.items())
+            print "Headers ---> ", json.dumps(_val, indent=2)
+            return _val
         elif isinstance(val, str) and val.find(r'\${') > -1:
             return self._render(val)
         return val
@@ -83,7 +88,14 @@ class BaseHandler(object):
             headers['Cookie'] = self._render(args['cookie'])
         new_headers = {}
         for k,v in headers.items() :
-            new_headers[k] = str(v)
+            if k.startswith("Z_") :
+                print v, type(v)
+            if isinstance(v, str) or isinstance(v, unicode) :
+                v = self._smart(v)
+            else :
+                v = str(v)
+            new_headers[k] = v
+        headers = new_headers
         params = {}
         if args.get('params') :
             for k,v in args['params'].items() :
@@ -91,6 +103,20 @@ class BaseHandler(object):
         log.debug('Headers -->\n' + json.dumps(headers, indent=2))
         log.debug('Params  -->\n' + json.dumps(params, indent=2))
         return (headers, params)
+    
+    def _smart(self, value, read_file=False):
+        if not isinstance(value, str) and not isinstance(value, unicode) :
+            return value
+        if value.startswith('context:') :
+            return self._eval(value[8:])
+        if value.startswith('file:') :
+            file_path = self._render(value[5:])
+            if read_file :
+                with open(file_path) as f :
+                    return f.read()
+            return file_path
+        return self._render(value)
+                
     
     def run_node(self, node):
         log.debug("Run node --> " + json.dumps(node, indent=2, ensure_ascii=False))
@@ -103,6 +129,8 @@ class BaseHandler(object):
             else :
                 _args = {}
                 for k,v in args.items() :
+                    if isinstance(v, str) :
+                        v = self._render(v)
                     _args[k.replace('.', '_')] = v
                 self.last_code = type_method(**args)
         except :
@@ -201,17 +229,30 @@ class BaseHandler(object):
                         
     def ajax_upload(self, url=None, method='POST', file=None, **kwargs):
         headers, params = self._render_headers_params(kwargs)
-        file_path = self._render(file)
+        file_path = self._smart(file)
         with open(file_path) as f :
             resp = self.webclient.post(url, headers, params, body=f)
+        #log.debug('Ajax return = \n' + resp.read())
         if resp and resp.status == 200 :
             return NEXT_NODE
         else :
             return FAIL
     
-    def img_make(self, file=None, width=800, height=640, r=0, g=90 , b=90):
-        with open(self._render(file), 'w') as f :
-            img = bmp.BitMap( width, height, bmp.Color(r,g,b))
+    def img_make(self, file=None, width=800, height=640, bgcolor="#FF00FF"):
+        file_path = self._smart(file)
+        bgcolor = self._smart(bgcolor)
+        file_path = os.path.abspath(file_path)
+        if not os.path.exists(os.path.dirname(file_path)) :
+            os.makedirs(os.path.dirname(file_path))
+        if isinstance(bgcolor, str) and bgcolor.startswith("#") :
+            bgcolor = bgcolor[1:]
+            bgcolor = int(bgcolor, 16)
+            bgcolor = bmp.Color.fromLong(bgcolor)
+        else :
+            bgcolor = bmp.Color.fromLong(int(bgcolor))
+        log.info("Write image into path --> " + file_path)
+        with open(file_path, 'w') as f :
+            img = bmp.BitMap( width, height, bgcolor)
             f.write(img.getBitmap())
         return NEXT_NODE
 
@@ -278,6 +319,7 @@ class BaseHandler(object):
             else :
                 s = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPMNBVCXZLKJHGFDSA'
                 self.context[name] = ''.join(r.sample(list(s), r.randint(min, max) or 1))
+        log.debug('Current context=\n' + json.dumps(self.context, indent=2))
         
     def extends(self, type_name=None, type_method=None):
         _self = self

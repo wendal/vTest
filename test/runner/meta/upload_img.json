@@ -1,0 +1,87 @@
+{
+    "server": "http://192.168.2.180:8080",
+    "task": {
+        "headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121"
+        }
+    },
+    "steps": [
+        {
+            "node": "user.login"
+        },{
+            "type" : "control.loop",
+            "args" : {
+            	"start" : 0,
+            	"end"   : 100,
+            	"run" : [
+            		{
+            			"type" : "random",
+            			"args" : {
+            				"name" : "tmp_image_bgcolor",
+            				"tp"   : "int",
+            				"min"  : 0,
+            				"max"  : 16777215
+            			}
+            		},
+            		{
+            			"type" : "random",
+            			"args" : {
+            				"name" : "tmp_image_name",
+            				"tp"   : "string",
+            				"min"  : 10,
+            				"max"  : 16
+            			}
+            		},
+            		{
+            			"type" : "img_make",
+            			"args" : {
+            				"bgcolor" : "context:tmp_image_bgcolor",
+            				"file" : "${tmp}/img/${tmp_image_name}.bmp"
+            			}
+            		},
+            		{
+            			"type" : "ajax.upload",
+            			"args" : {
+            				"url"  : "/ex/a/bin",
+            				"file" : "${tmp}/img/${tmp_image_name}.bmp",
+            				"cookie" : "${http_reps_headers['set-cookie']}",
+            				"headers" : {
+            					"$use": "task.headers",
+            					"Z_FID" : "4294967384",
+            					"Z_FNM" : "${tmp_image_name}.bmp"}
+            			}
+            		}
+            	]
+            }
+        }
+    ],
+    "nodes": {
+    	"user.login" : {
+            "type": "http.send",
+            "args": {
+                "url": "/do/login",
+                "method": "POST",
+                "headers": {
+                    "$use": "task.headers"
+                },
+                "params"  : {
+                	"dmn" : "danoo",
+                	"nm"  : "danoo",
+                	"pwd" : "123456"
+                },
+                "reps_header": "http_reps_headers"
+            }
+        },
+        "img_create_upload" : {
+        	"type" : "http.send",
+        	"args" : {
+        		"url" : "/ajax/ls",
+        		"params" : {
+        			"pid" : 4294967384,
+        			"mo"  : 0
+        		},
+        		"cookie" : "${http_reps_headers['set-cookie']}"
+        	}
+        }
+    }
+}

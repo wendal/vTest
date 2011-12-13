@@ -3,6 +3,7 @@
 import httplib
 import urllib
 import logging
+import json
 
 log = logging.getLogger('vtest.helper')
 
@@ -84,7 +85,7 @@ def renderTpl(tpl,datas={}):
         pre = tpl[0:start]
         elx = tpl[start+2:end]
         post = tpl[(end+1):]
-        return renderTpl(pre + str(el(elx, datas)) + post)
+        return renderTpl(pre + str(el(elx, datas)) + post, datas)
     print 'render result -->', tpl,'tpl->>', tpl
     return tpl
     
@@ -93,6 +94,7 @@ def el(el_str, context):
     
     elx = 'cxt' + to_python_el(el_str)
     print elx
+    print json.dumps(context, indent=2)
     return eval(elx, {'cxt' : context})
 
 def to_python_el(el_str):
