@@ -6,7 +6,6 @@ import shutil
 import json
 import new
 import time
-import uuid
 import os
 import socket
 import vtest.client.bmp as bmp
@@ -23,14 +22,15 @@ LOOP_BREAK=5
 
 class BaseHandler(object):
     
-    def __init__(self, task=None, _log=None):
-        if task :
-            self.webclient = WebClient(task['host'], task['port'])
+    def __init__(self, task, robot_conf):
+        self.last_msg = 'Unkown ERROR'
+        self.last_code = ERROR
+        self.webclient = WebClient(server_url=task['server'])
         self.context = {
                             'task' : task['task'] ,
                             'tmp'  : '/tmp/',
                             'robot': {
-                                        'id' : uuid.uuid4().hex,
+                                        'id' : robot_conf['rid'],
                                         'pid': os.getpid()
                                       },
                             'sys'  : {
@@ -44,7 +44,7 @@ class BaseHandler(object):
         
     def run(self):
         self.control_foreach(self.task.get('steps'), need_report=True)
-        log.info('Exit code=%d' % self.last_code)
+        log.info('Exit code=%d, is OK? %s' % (self.last_code, self.last_code == SUCCESS))
         if not self.last_code :
             return SUCCESS
         return self.last_code
@@ -62,9 +62,11 @@ class BaseHandler(object):
             return self._render(val)
         return val
     
-    def _render(self, tpl):
+    def _render(self, tpl, _context=None):
         r'''模板渲染,返回值是一个str'''
-        result = renderTpl(tpl, self.context)
+        if not _context :
+            _context = self.context
+        result = renderTpl(tpl, _context)
         if isinstance(result, unicode) :
             result = result.encode()
         print result
@@ -122,7 +124,7 @@ class BaseHandler(object):
                         return NEXT_NODE
                 #LOOP_NEXT对foreach无意义
             finally:
-                self.nodes_report['times'].append((time.time() - start_time ) / 100.0)
+                self.nodes_report['times'].append((time.time() - start_time ) * 1000)
             i += 1
         return NEXT_NODE
     
@@ -264,6 +266,8 @@ class BaseHandler(object):
                 self.context[name] = ''.join(r.sample(list(s), r.randint(min, max) or 1))
         
     def extends(self, type_name=None, type_method=None):
+        _self = self
+        _context = self.context
         if type_name and type_method :
             _method = None
             exec type_method + '''\n_method = %s''' % type_name
@@ -271,8 +275,23 @@ class BaseHandler(object):
         elif type_method :
             exec type_method
 
-
-
+    def segment(self, dest=None, tmpl=None, params=None):
+        ps = {}
+        for k,v in params.items() :
+            if v.startswith('file:') :
+                with open(self._render(v[5:])) as f :
+                    ps[k] = f.read()
+            elif v.startswith('context:') :
+                v = self.context[v[8:]]
+                if isinstance(v, str) :
+                    ps[k] = v
+                else :
+                    ps[k] = json.dumps(v)
+            else :
+                ps[k] = self._render(v)
+        with open(self._render(tmpl)) as f :
+            self.context[dest] = self._render(f.read(), _context=ps)
+                
 
 
 

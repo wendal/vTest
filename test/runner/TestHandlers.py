@@ -10,7 +10,7 @@ from vtest.client.handlers import SUCCESS
 import json
 
 with open('meta/base.json') as f :
-    h = BaseHandler(json.load(f))
+    h = BaseHandler(json.load(f), {'rid' : -1})
 
 class Test(unittest.TestCase):
 

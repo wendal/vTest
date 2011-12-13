@@ -1,6 +1,5 @@
 {
-    "host": "wendal.net",
-    "port": 80,
+    "server": "http://wendal.net",
     "task": {
         "headers": {
             "User-Agent": "Strato Robot"

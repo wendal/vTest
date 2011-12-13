@@ -5,9 +5,11 @@ import urllib
 
 class WebClient(object):
     
-    def __init__(self, host='127.0.0.1', port=80):
-        self.host=host
-        self.port=port
+    def __init__(self, server_url='127.0.0.1:8080'):
+        if server_url.startswith('http://') :
+            self.server_url=server_url[7:]
+        else :
+            self.server_url=server_url
         self.cookie='NONE'
     
     def send(self, method, uri, headers=None,data=None):
@@ -19,7 +21,7 @@ class WebClient(object):
         return None #TODO warning it
     
     def get(self, uri, headers=None, params=None):
-        conn = httplib.HTTPConnection(host=self.host,port=self.port)
+        conn = httplib.HTTPConnection(host=self.server_url)
         #conn.set_debuglevel(5)
         if not headers :
             headers = {}
@@ -31,7 +33,7 @@ class WebClient(object):
         return conn.getresponse()
 
     def post(self, uri, headers=None, params=None, body=None):
-        conn = httplib.HTTPConnection(host=self.host,port=self.port)
+        conn = httplib.HTTPConnection(self.server_url)
         #conn.set_debuglevel(5)
         if not headers :
             headers = {}
