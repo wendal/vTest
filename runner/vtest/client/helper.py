@@ -23,7 +23,7 @@ class WebClient(object):
         self.cookie='NONE'
     
     def send(self, method, url, headers=None,data=None):
-        log.debug('Http method = ' + method)
+        #log.debug('Http method = ' + method)
         method = method.lower()
         if method == 'get' :
             return self.get(url, headers)
@@ -34,7 +34,7 @@ class WebClient(object):
     def get(self, url, headers=None, params=None):
         (host, port, uri) = self._p_url(url)
         conn = httplib.HTTPConnection(host=host, port=port)
-        conn.set_debuglevel(5)
+        #conn.set_debuglevel(5)
         if not headers :
             headers = {}
         if not headers.get('Cookie') :
@@ -42,12 +42,13 @@ class WebClient(object):
         if params :
             uri += urllib.urlencode(params)
         conn.request("GET", uri, body=None, headers=headers)
+        log.debug('Done for req, return resp now!!')
         return conn.getresponse()
 
     def post(self, url, headers=None, params=None, body=None):
         (host, port, uri) = self._p_url(url)
         conn = httplib.HTTPConnection(host=host, port=port)
-        conn.set_debuglevel(5)
+        #conn.set_debuglevel(5)
         if not headers :
             headers = {}
         if not headers.get('Cookie') :
@@ -60,6 +61,7 @@ class WebClient(object):
             else :
                 body = str(params)
         conn.request("POST", uri, body=body, headers=headers)
+        log.debug('Done for req, return resp now!!')
         return conn.getresponse()
     
     def _p_url(self,url):
@@ -89,15 +91,15 @@ def renderTpl(tpl,datas={}):
         elx = tpl[start+2:end]
         post = tpl[(end+1):]
         return renderTpl(pre + str(el(elx, datas)) + post, datas)
-    print 'render result -->', tpl,'tpl->>', tpl
+    #log.debug('render result -->', tpl,'tpl->>', tpl)
     return tpl
     
     
 def el(el_str, context):
     
     elx = 'cxt' + to_python_el(el_str)
-    print elx
-    print json.dumps(context, indent=2)
+    #print elx
+    #print json.dumps(context, indent=2)
     return eval(elx, {'cxt' : context})
 
 def to_python_el(el_str):

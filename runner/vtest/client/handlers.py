@@ -44,9 +44,9 @@ class BaseHandler(object):
         
     def run(self):
         self.control_foreach(self.task['steps'], need_report=True)
-        log.info('Exit code=%d, is OK? %s' % (self.last_code, self.last_code == SUCCESS))
         if not self.last_code :
-            return SUCCESS
+            self.last_code = SUCCESS
+        log.info('Exit code=%d, is OK? %s' % (self.last_code, self.last_code == SUCCESS))
         return self.last_code
     
     def _use(self, key):
@@ -61,7 +61,7 @@ class BaseHandler(object):
                 _val.pop("$use")
                 _v = self._eval(val['$use'])
                 _val = dict(_val.items() + _v.items())
-            print "Headers ---> ", json.dumps(_val, indent=2)
+            #print "Headers ---> ", json.dumps(_val, indent=2)
             return _val
         elif isinstance(val, str) and val.find(r'\${') > -1:
             return self._render(val)
@@ -74,7 +74,7 @@ class BaseHandler(object):
         result = renderTpl(tpl, _context)
         if isinstance(result, unicode) :
             result = result.encode()
-        print result
+        #print result
         return result
     
     def _eval(self, el_str):
@@ -88,8 +88,8 @@ class BaseHandler(object):
             headers['Cookie'] = self._render(args['cookie'])
         new_headers = {}
         for k,v in headers.items() :
-            if k.startswith("Z_") :
-                print v, type(v)
+            #if k.startswith("Z_") :
+            #    print v, type(v)
             if isinstance(v, str) or isinstance(v, unicode) :
                 v = self._smart(v)
             else :
@@ -100,8 +100,8 @@ class BaseHandler(object):
         if args.get('params') :
             for k,v in args['params'].items() :
                 params[k] = self._render(str(v))
-        log.debug('Headers -->\n' + json.dumps(headers, indent=2))
-        log.debug('Params  -->\n' + json.dumps(params, indent=2))
+        #log.debug('Headers -->\n' + json.dumps(headers, indent=2))
+        #log.debug('Params  -->\n' + json.dumps(params, indent=2))
         return (headers, params)
     
     def _smart(self, value, read_file=False):
@@ -207,7 +207,7 @@ class BaseHandler(object):
         if not resp :
             log.error('Resp is NULL!!')
             return FAIL
-        log.debug('Resp code=%d, body=\n%s' % (resp.status, resp.read()))
+        #log.debug('Resp code=%d, body=\n%s' % (resp.status, resp.read()))
         if resp.status >= 303 :
             log.error('Resp is None or resp.status > 303 !!')
             return FAIL
@@ -230,7 +230,8 @@ class BaseHandler(object):
     def ajax_upload(self, url=None, method='POST', file=None, **kwargs):
         headers, params = self._render_headers_params(kwargs)
         file_path = self._smart(file)
-        with open(file_path) as f :
+        #headers['Context-Length'] = str(os.path.getsize(file_path))
+        with open(file_path, 'rb') as f :
             resp = self.webclient.post(url, headers, None, body=f)
         #log.debug('Ajax return = \n' + resp.read())
         if resp and resp.status == 200 :
@@ -253,11 +254,14 @@ class BaseHandler(object):
         log.info("Write image into path --> " + file_path)
         with open(file_path, 'w') as f :
             if format == 'png' :
+                log.debug('Creating a png image ....')
                 from vtest.client.helper import create_png
                 create_png(file_path, width, height, r=bgcolor.red, g=bgcolor.grn, b=bgcolor.blu)
             else :
+                log.debug('Creating a bmp image ....')
                 img = bmp.BitMap( width, height, bgcolor)
                 f.write(img.getBitmap())
+        log.debug('Image info : size=%d , path=%s', os.path.getsize(file_path), file_path)
         return NEXT_NODE
 
     def json_parse(self, source='', dest=None):
@@ -323,7 +327,7 @@ class BaseHandler(object):
             else :
                 s = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPMNBVCXZLKJHGFDSA'
                 self.context[name] = ''.join(r.sample(list(s), r.randint(min, max) or 1))
-        log.debug('Current context=\n' + json.dumps(self.context, indent=2))
+        #log.debug('Current context=\n' + json.dumps(self.context, indent=2))
         
     def extends(self, type_name=None, type_method=None):
         _self = self
