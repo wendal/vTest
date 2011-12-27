@@ -4,7 +4,8 @@
 APP_HOME=`pwd`/../ROOT
 JETTY_HOME=~/jetty
 
-cp=.:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/jre/rt.jar
+#cp=.:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/jre/rt.jar
+cp="."
 cp=$cp:$APP_HOME/WEB-INF/classes
 
 cd $APP_HOME/WEB-INF/lib
