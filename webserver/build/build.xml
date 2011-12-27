@@ -23,7 +23,6 @@
 	<property name="DEST" value="${env.OUTPUT}" />
 	<!-- 项目工程根目录 -->
 	<property name="PROJECT_HOME" value="${env.PROJECT_HOME}" />
-	<property name="UI_HOME" value="${env.UI_HOME}" />
     <property name="TMP" value="${PROJECT_HOME}/build/temp" />
 	<!--
 	定以变量
@@ -57,7 +56,7 @@
 			<compilerarg value="-Xlint:all" />
 			<classpath refid="CLASSPATH" />
 		</javac>
-		<jar destfile="${ROOT}/WEB-INF/lib/strato-domain.jar" basedir="${TMP}" includes="**" />
+		<jar destfile="${ROOT}/WEB-INF/lib/vTest.jar" basedir="${TMP}" includes="**" />
 		<delete dir="${TMP}" />
 	</target>
 
@@ -81,11 +80,6 @@
 				<include name="**/*.js" />
 				<include name="**/*.properties" />
 				<include name="**/*.png" />
-			</fileset>
-		</copy>
-		<copy todir="${ROOT}/WEB-INF/classes/">
-			<fileset dir="${PROJECT_HOME}/../rain/properties">
-				<include name="**" />
 			</fileset>
 		</copy>
 		<!--
